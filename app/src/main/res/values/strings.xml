@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">E6_Slither</string>
+    <string name="str1">TCP Connect(顯示P幾)</string>
+    <string name="str2">Lat: </string>
+    <string name="str3">Lng:</string>
+    <string name="p1">P1:</string>
+    <string name="p2">P2:</string>
+    <string name="p3">P3:</string>
+    <string name="p4">P4:</string>
+    <string name="str4">Submit</string>
+    <string name="str5">Camera</string>
+    <string name="str6">Sensor</string>
+    <string name="str7">GPS</string>
+
+    <string name="sensor1">陀螺儀：</string>
+    <string name="sensor2">G Sensor：</string>
+    <string name="sensor3">磁力感測：</string>
+
+    <string name="gps1">Latitude:</string>
+    <string name="gps2">Longitude:</string>
+</resources>
