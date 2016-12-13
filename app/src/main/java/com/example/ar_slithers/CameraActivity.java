@@ -3,7 +3,7 @@
  * (1)要有 Surface, Camera2, ImageReader
  * (2)打開相機
  ********************************/
-package com.example.e6_slithers;
+package com.example.ar_slithers;
 
 import android.Manifest;
 import android.content.Context;
@@ -25,6 +25,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+
+import com.example.e6_slithers.R;
 
 import java.util.Arrays;
 

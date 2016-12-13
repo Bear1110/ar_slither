@@ -1,4 +1,4 @@
-package com.example.e6_slithers;
+package com.example.ar_slithers;
 
 public class player {
     public player(int id,String ip){

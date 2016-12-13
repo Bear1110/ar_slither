@@ -9,7 +9,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.e6_slithers.SensorActivity"
+    tools:context="com.example.e6_slithers.com.example.ar_slithers.SensorActivity"
     android:weightSum="1">
 
     <TextView

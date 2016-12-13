@@ -1,4 +1,4 @@
-package com.example.e6_slithers;
+package com.example.ar_slithers;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

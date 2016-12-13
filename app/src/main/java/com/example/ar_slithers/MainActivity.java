@@ -1,4 +1,4 @@
-package com.example.e6_slithers;
+package com.example.ar_slithers;
 
 import android.content.Intent;
 import android.os.Handler;
@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.e6_slithers.R;
 import com.google.gson.Gson;
 
 import org.json.JSONException;

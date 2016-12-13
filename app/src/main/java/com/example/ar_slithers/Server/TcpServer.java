@@ -1,5 +1,4 @@
-package com.example.e6_slithers.Server;
-
+package com.example.ar_slithers.Server;
 import java.io.*;
 import java.net.*;
 import java.util.Stack;
@@ -108,7 +107,6 @@ public class TcpServer {
                         }
                         // 送出到 client 的消息
                         output.writeUTF(ServerData.toString());
-                        System.out.println("output2");
                         output.flush();
                     } catch (IOException e) {
                         // e.printStackTrace();

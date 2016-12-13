@@ -1,4 +1,4 @@
-package com.example.e6_slithers;
+package com.example.ar_slithers;
 
 import android.content.Context;
 import android.hardware.Sensor;
@@ -11,6 +11,8 @@ import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
+
+import com.example.e6_slithers.R;
 
 public class SensorActivity extends AppCompatActivity implements SensorEventListener {
 

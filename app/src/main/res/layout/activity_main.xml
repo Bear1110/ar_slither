@@ -9,7 +9,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.e6_slithers.MainActivity">
+    tools:context="com.example.e6_slithers.com.example.ar_slithers.MainActivity">
 
     <TextView
         android:layout_width="match_parent"
@@ -255,7 +255,7 @@
 
             </TableRow>
 
-        <com.example.e6_slithers.PaintBoard
+        <com.example.ar_slithers.PaintBoard
             android:id="@+id/paint_board"
             android:layout_width="124dp"
             android:layout_height="144dp"
