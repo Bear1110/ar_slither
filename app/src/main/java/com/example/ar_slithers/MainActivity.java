@@ -8,14 +8,11 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Handler;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,10 +20,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.e6_slithers.R;
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.appindexing.Thing;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
@@ -38,7 +31,6 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.text.DecimalFormat;
-import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -57,7 +49,8 @@ public class MainActivity extends AppCompatActivity {
     private Location location;
     private String bestProvider = LocationManager.GPS_PROVIDER;
 
-    public player[] player = new player[4];
+    private player[] player = new player[4];
+    private int id  = 999;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getLocation(Location location) { // 將定位資訊顯示在畫面中
-        DecimalFormat df = new DecimalFormat("#.###");
+        DecimalFormat df = new DecimalFormat("#.######"); //精準到第幾位
         if (location != null) {
             Double longitude = location.getLongitude(); // 取得經度
             Double latitude = location.getLatitude(); // 取得緯度
@@ -178,17 +171,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void submit_click() {
-        ExecutorService exe = Executors.newSingleThreadExecutor();
-        exe.execute(new simulateMotion());
-        Random ran = new Random();
-        View test = (View) findViewById(R.id.paint_board);
-        PaintBoard.target[0] = ran.nextInt(test.getWidth()); //本人座標
-        PaintBoard.target[1] = ran.nextInt(test.getHeight());
-        for (int i = 0; i < 5; i++) {
-            int[] temp = {ran.nextInt(test.getWidth()), ran.nextInt(test.getHeight())};
-            PaintBoard.other.add(temp); //  其他人座標
-//          PaintBoard.other.clear();
-        }
     }
     private void updateData(String ServerData) {
         Gson gson = new Gson();
@@ -196,12 +178,24 @@ public class MainActivity extends AppCompatActivity {
             JSONObject transfer = new JSONObject(ServerData);
             player = gson.fromJson(transfer.getString("Data"), player[].class);
         } catch (JSONException e) {e.printStackTrace();}
+
+        PaintBoard.other.clear();
         for (int i = 0; i < 4; i++) {
             if (player[i] != null) {
                 latView[i].setText(player[i].Lat);
                 lngView[i].setText(player[i].Lng);
+                if(player[i].id == id && !player[i].Lat.equals("")){
+//                    PaintBoard.target[0] = Double.parseDouble(player[i].Lat); //本人座標
+//                    PaintBoard.target[1] = Double.parseDouble(player[i].Lng);
+                    PaintBoard.target[0] = Double.parseDouble(121.187504+"");
+                    PaintBoard.target[1] = Double.parseDouble(24.966835+"");
+                }else {
+                    double[] temp = {Double.parseDouble(player[i].Lat), Double.parseDouble(player[i].Lng)};
+                    PaintBoard.other.add(temp); //  其他人座標
+                }
             } else
                 latView[i].setText("此位置尚未加入");
+
         }
     }
 
@@ -218,12 +212,11 @@ public class MainActivity extends AppCompatActivity {
                 handler.post(new Runnable() {
                     public void run() {
                         updateData(ServerData);
-                        int temp = 999;
                         for (int i = 0; i < 4; i++) { // 找到他是P幾
                             if (player[i] != null && player[i].ip.equals(clientSocket.getLocalSocketAddress().toString()))
-                                temp = player[i].id;
+                                id = player[i].id;
                         }
-                        mTitle.setText("Input Location(You are P" + temp + ")");
+                        mTitle.setText("Input Location(You are P" + id + ")");
                     }
                 });
                 while (true) {
@@ -257,32 +250,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
-
-    class simulateMotion implements Runnable {
-        private Handler handler = new Handler();
-
-        public void run() {
-            while (true) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                Random ran = new Random();
-                PaintBoard.target[0] += -20 + ran.nextInt(40);
-                PaintBoard.target[1] += -20 + ran.nextInt(40);
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mLat_input.setText(PaintBoard.target[0] + "");
-                        mLng_input.setText(PaintBoard.target[1] + "");
-                    }
-                });
-
-            }
-        }
-    }
-
     private final LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) { //

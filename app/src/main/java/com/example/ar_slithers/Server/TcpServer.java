@@ -20,6 +20,15 @@ public class TcpServer {
         for(int i = 3 ; i >= 0 ; i--){
             empty.push(i);
         }
+        player[1] = new player( 2 ,  "");
+        player[1].Lat = "121.187637"; //水滴
+        player[1].Lng = "24.967377";
+        player[2] = new player( 3 ,  "");
+        player[2].Lat = "121.187596"; //停車場
+        player[2].Lng = "24.966342";
+        player[3] = new player( 4 ,  "");
+        player[3].Lat = "121.186685"; //貨梯
+        player[3].Lng = "24.967114";
         ServerSocket serverSocket = null;
         ExecutorService threadExecutor = Executors.newFixedThreadPool(20);
         try {
@@ -42,7 +51,10 @@ public class TcpServer {
                 }
         }
     }
-
+    public static void main(String[] args) {
+        TcpServer server = new TcpServer();
+        server.listenRequest();
+    }
     class RequestThread implements Runnable {
         private Socket clientSocket;
         private String message = "";
@@ -61,15 +73,13 @@ public class TcpServer {
             Gson gson = new Gson();
 
             if ( empty.size() > 0 ) {
-                int thisId = empty.pop();  // ���t�@��Player���o�Ӫ��a  �ðO��ip
+                int thisId = empty.pop();  // 這是把 stack pop出來給他 算是發id
                 player[thisId] = new player( (thisId+1) , clientSocket.getRemoteSocketAddress() + "");
                 thisPlayer = thisId;
-
-                // �U���n�I�s�N player[thisPlayer]
+                // 下面要呼叫用 player[thisPlayer]
                 try {
                     input = new DataInputStream(this.clientSocket.getInputStream());
                     output = new DataOutputStream(this.clientSocket.getOutputStream());
-                    // ��̷s����ƶǵ� client
                     ServerData.put("Data", gson.toJson(player));
                     output.writeUTF(ServerData.toString());
                     output.flush();
@@ -90,7 +100,6 @@ public class TcpServer {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        // �e�X�� client ������
                         output.writeUTF(ServerData.toString());
                         output.flush();
                     } catch (IOException e) {
@@ -113,6 +122,7 @@ public class TcpServer {
                     }
 
                 }
+
             }else{// 超過四個PLAYER
                 try {
                     this.clientSocket.close();
@@ -125,14 +135,13 @@ public class TcpServer {
     }
 
     public class player {
-        public int id;
-        public String Lat = "test";
-        public String Lng = "test";
-        public String ip = "test";
-
         public player(int id, String ip) {
             this.id = id;
             this.ip = ip;
         }
+        public int id;
+        public String Lat = "0.0";
+        public String Lng = "0.0";
+        public String ip = "test";
     }
 }
