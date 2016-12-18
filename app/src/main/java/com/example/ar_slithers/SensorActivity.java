@@ -20,11 +20,6 @@ public class SensorActivity extends AppCompatActivity implements SensorEventList
     private SensorManager sensorManager;
     private Sensor gyrosensor, gsensor, msensor;
 
-    float[] accelerometerValues = new float[3];
-    float[] magneticFieldValues = new float[3];
-    float[] values = new float[3];
-    float[] rotaionMatrix = new float[9];
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +48,12 @@ public class SensorActivity extends AppCompatActivity implements SensorEventList
     @Override
     public void onSensorChanged(SensorEvent event) {
         String x, y, z;
-        
+
+        float[] accelerometerValues = new float[3];
+        float[] magneticFieldValues = new float[3];
+        float[] values = new float[3];
+        float[] rotaionMatrix = new float[9];
+
         DecimalFormat df = new DecimalFormat("#.###");
 
 		/*if(event.sensor.getType() == Sensor.TYPE_GYROSCOPE){ // 陀螺儀
