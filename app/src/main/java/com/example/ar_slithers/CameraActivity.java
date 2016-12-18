@@ -5,6 +5,7 @@
  ********************************/
 package com.example.ar_slithers;
 
+import com.example.e6_slithers.R;
 import android.Manifest;
 import android.content.Context;
 import android.graphics.ImageFormat;
@@ -26,15 +27,20 @@ import android.view.SurfaceView;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.example.e6_slithers.R;
-
 import java.util.Arrays;
 
 public class CameraActivity extends AppCompatActivity {
 
-    private SurfaceHolder surfaceHolder;
+    /* SurfaceView 是 View 的子類，在新的線程中主動更新畫面所以刷新介面速度比 View 快
+     * 可以把由 Surface 管理的顯示內容數據顯示到螢幕上面 */
     private SurfaceView cameraView;
+    /* SurfaceHolder 是控制 Surface 的接口
+     * Surface 則是 View 裡面專門用於繪製的類別 */
+    private SurfaceHolder surfaceHolder;
+    /* CameraManager 是相機的管理者
+     * 可用 getCameraCharacteristics(String) 獲取相機特性 */
     private CameraManager cameraManager;
+    /* CameraDevice 即代表系統的相機 */
     private CameraDevice cameraDevice;
     private Handler cameraHandler;
     private ImageReader imageReader;
@@ -59,7 +65,7 @@ public class CameraActivity extends AppCompatActivity {
                 (SensorManager)getSystemService(Context.SENSOR_SERVICE)));
     }
 
-    // SurfaceHolder Callback => Callback2???
+    // SurfaceHolder Callback 是監聽 surface 改變的一個接口
     private SurfaceHolder.Callback surfaceCallBack = new SurfaceHolder.Callback() {
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
@@ -87,7 +93,7 @@ public class CameraActivity extends AppCompatActivity {
         openCamera();
     }
 
-    // 詢問是否能取得權限
+    // 詢問使用者是否能取得權限
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
@@ -121,11 +127,12 @@ public class CameraActivity extends AppCompatActivity {
     private CameraDevice.StateCallback DeviceStateCallback = new CameraDevice.StateCallback() {
         @Override
         public void onOpened(CameraDevice camera) {
+            // 如果成功打開相機，取得相機到 CameraDevice
             cameraDevice = camera;
             try {
                 createCameraCaptureSession();
             } catch (CameraAccessException e) {
-                e.printStackTrace();
+                finish();
             }
         }
 
@@ -142,10 +149,13 @@ public class CameraActivity extends AppCompatActivity {
     };
 
     // 建立預覽畫面
+    // CameraCaptureSession 與相機建立對話
     private void createCameraCaptureSession() throws CameraAccessException {
         // 寫入 captureRequest 的 field 設定和輸出的 target surface
+        // previewBuilder 去發 capture request 取得後顯示在 surface 上
         previewBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
         previewBuilder.addTarget(surfaceHolder.getSurface());
+
         // 一個 request 對應一個 image data
         cameraDevice.createCaptureSession(
                 Arrays.asList(surfaceHolder.getSurface(), imageReader.getSurface()),
@@ -157,7 +167,6 @@ public class CameraActivity extends AppCompatActivity {
             = new CameraCaptureSession.StateCallback() {
         @Override
         public void onConfigured(CameraCaptureSession session) {
-            //mSession = session;
             try {
                 // Auto focus should be continuous for camera preview.
                 previewBuilder.set(CaptureRequest.CONTROL_AF_MODE,
@@ -167,7 +176,7 @@ public class CameraActivity extends AppCompatActivity {
                 previewBuilder.set(CaptureRequest.CONTROL_AE_MODE,
                         CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH);
 
-                // 將捕獲的畫面持續顯示在preview上 *如果要新增拍照功能 null 改成 SessionCaptureCallback
+                // 將捕獲的畫面持續顯示在preview上
                 session.setRepeatingRequest(previewBuilder.build(), null, cameraHandler);
             } catch (CameraAccessException e) {
                 e.printStackTrace();

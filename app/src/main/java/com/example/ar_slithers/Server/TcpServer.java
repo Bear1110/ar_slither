@@ -1,4 +1,5 @@
 package com.example.ar_slithers.Server;
+
 import java.io.*;
 import java.net.*;
 import java.util.Stack;
@@ -19,14 +20,22 @@ public class TcpServer {
         for(int i = 3 ; i >= 0 ; i--){
             empty.push(i);
         }
+        player[1] = new player( 2 ,  "");
+        player[1].Lat = "121.187637"; //水滴
+        player[1].Lng = "24.967377";
+        player[2] = new player( 3 ,  "");
+        player[2].Lat = "121.187596"; //停車場
+        player[2].Lng = "24.966342";
+        player[3] = new player( 4 ,  "");
+        player[3].Lat = "121.186685"; //貨梯
+        player[3].Lng = "24.967114";
         ServerSocket serverSocket = null;
         ExecutorService threadExecutor = Executors.newFixedThreadPool(20);
         try {
             serverSocket = new ServerSocket(LISTEN_PORT);
             System.out.println("Server listening requests...");
-            while(true) { //accept() 會等待連線
+            while(true) { //accept()
                 Socket socket = serverSocket.accept();
-                System.out.println("request");
                 threadExecutor.execute(new RequestThread(socket));
             }
         } catch (IOException e) {
@@ -42,20 +51,10 @@ public class TcpServer {
                 }
         }
     }
-
-    /**
-     * @param args
-     */
     public static void main(String[] args) {
         TcpServer server = new TcpServer();
         server.listenRequest();
     }
-
-    /**
-     * 處理Client端的Request執行續。
-     *
-     * @version
-     */
     class RequestThread implements Runnable {
         private Socket clientSocket;
         private String message = "";
@@ -74,18 +73,15 @@ public class TcpServer {
             Gson gson = new Gson();
 
             if ( empty.size() > 0 ) {
-                int thisId = empty.pop();  // 分配一個Player給這個玩家  並記錄ip
+                int thisId = empty.pop();  // 這是把 stack pop出來給他 算是發id
                 player[thisId] = new player( (thisId+1) , clientSocket.getRemoteSocketAddress() + "");
                 thisPlayer = thisId;
-
-                // 下面要呼叫就 player[thisPlayer]
+                // 下面要呼叫用 player[thisPlayer]
                 try {
                     input = new DataInputStream(this.clientSocket.getInputStream());
                     output = new DataOutputStream(this.clientSocket.getOutputStream());
-                    // 把最新的資料傳給 client
                     ServerData.put("Data", gson.toJson(player));
                     output.writeUTF(ServerData.toString());
-                    System.out.println("output");
                     output.flush();
                 } catch (IOException e1) {
                     e1.printStackTrace();
@@ -94,18 +90,16 @@ public class TcpServer {
                 }
                 while (!this.clientSocket.isClosed()) {
                     try {
-                        // 讀入送到 server 的消息，這裡也會等待 read
                         message = input.readUTF();
-                        System.out.println("P" + (thisPlayer + 1) + "對我說:" + message);
+                        System.out.println("P" + (thisPlayer + 1) + "說:" + message);
                         try {
-                            JSONObject messageJSON = new JSONObject(message); // 轉成JSON
+                            JSONObject messageJSON = new JSONObject(message);
                             player[thisPlayer].Lat = messageJSON.get("lat").toString();
                             player[thisPlayer].Lng = messageJSON.get("lng").toString();
                             ServerData.put("Data", gson.toJson(player));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        // 送出到 client 的消息
                         output.writeUTF(ServerData.toString());
                         output.flush();
                     } catch (IOException e) {
@@ -129,13 +123,13 @@ public class TcpServer {
 
                 }
 
-            }else{// 這邊是超過四個人的時候做的事情
+            }else{// 超過四個PLAYER
                 try {
                     this.clientSocket.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                System.out.println("已經超過四位使用者了!!!"+clientSocket.getRemoteSocketAddress()+"<<抱歉你進不來");
+                System.out.println("已經滿人了!!!"+clientSocket.getRemoteSocketAddress()+"離開連線");
             }
         }
     }
@@ -145,10 +139,9 @@ public class TcpServer {
             this.id = id;
             this.ip = ip;
         }
-
         public int id;
-        public String Lat = "test";
-        public String Lng = "test";
+        public String Lat = "0.0";
+        public String Lng = "0.0";
         public String ip = "test";
     }
 }
