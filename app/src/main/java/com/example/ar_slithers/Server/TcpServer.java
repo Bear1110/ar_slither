@@ -1,5 +1,4 @@
 package com.example.ar_slithers.Server;
-
 import java.io.*;
 import java.net.*;
 import java.util.Stack;
@@ -20,15 +19,15 @@ public class TcpServer {
         for(int i = 3 ; i >= 0 ; i--){
             empty.push(i);
         }
-        player[1] = new player( 2 ,  "");
-        player[1].Lat = "121.187637"; //水滴
-        player[1].Lng = "24.967377";
-        player[2] = new player( 3 ,  "");
-        player[2].Lat = "121.187596"; //停車場
-        player[2].Lng = "24.966342";
-        player[3] = new player( 4 ,  "");
-        player[3].Lat = "121.186685"; //貨梯
-        player[3].Lng = "24.967114";
+//        player[1] = new player( 2 ,  "");
+//        player[1].Lat = "121.187637"; //水滴
+//        player[1].Lng = "24.967377";
+//        player[2] = new player( 3 ,  "");
+//        player[2].Lat = "121.187596"; //停車場
+//        player[2].Lng = "24.966342";
+//        player[3] = new player( 4 ,  "");
+//        player[3].Lat = "121.186685"; //貨梯
+//        player[3].Lng = "24.967114";
         ServerSocket serverSocket = null;
         ExecutorService threadExecutor = Executors.newFixedThreadPool(20);
         try {
@@ -58,7 +57,7 @@ public class TcpServer {
     class RequestThread implements Runnable {
         private Socket clientSocket;
         private String message = "";
-        private int thisPlayer = 0;
+        private player thisPlayer = null;
 
         public RequestThread(Socket clientSocket) {
             this.clientSocket = clientSocket;
@@ -75,11 +74,12 @@ public class TcpServer {
             if ( empty.size() > 0 ) {
                 int thisId = empty.pop();  // 這是把 stack pop出來給他 算是發id
                 player[thisId] = new player( (thisId+1) , clientSocket.getRemoteSocketAddress() + "");
-                thisPlayer = thisId;
+                thisPlayer = player[thisId];
                 // 下面要呼叫用 player[thisPlayer]
                 try {
                     input = new DataInputStream(this.clientSocket.getInputStream());
                     output = new DataOutputStream(this.clientSocket.getOutputStream());
+                    ServerData.put("id",thisPlayer.id);
                     ServerData.put("Data", gson.toJson(player));
                     output.writeUTF(ServerData.toString());
                     output.flush();
@@ -91,11 +91,11 @@ public class TcpServer {
                 while (!this.clientSocket.isClosed()) {
                     try {
                         message = input.readUTF();
-                        System.out.println("P" + (thisPlayer + 1) + "說:" + message);
+                        System.out.println("P" + (thisPlayer.id) + "說:" + message);
                         try {
                             JSONObject messageJSON = new JSONObject(message);
-                            player[thisPlayer].Lat = messageJSON.get("lat").toString();
-                            player[thisPlayer].Lng = messageJSON.get("lng").toString();
+                            thisPlayer.Lat = messageJSON.get("lat").toString();
+                            thisPlayer.Lng = messageJSON.get("lng").toString();
                             ServerData.put("Data", gson.toJson(player));
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -105,8 +105,8 @@ public class TcpServer {
                     } catch (IOException e) {
                         // e.printStackTrace();
                         System.out.println(String.format("連線中斷,%s", clientSocket.getRemoteSocketAddress()));
-                        int delete = player[thisPlayer].id-1;
-                        player[thisPlayer] = null;
+                        int delete = thisPlayer.id-1;
+                        player[delete] = null;
                         empty.push(delete);
 
                         try {

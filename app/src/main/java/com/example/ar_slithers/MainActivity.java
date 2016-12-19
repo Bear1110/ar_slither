@@ -184,18 +184,19 @@ public class MainActivity extends AppCompatActivity {
             if (player[i] != null) {
                 latView[i].setText(player[i].Lat);
                 lngView[i].setText(player[i].Lng);
-                if(player[i].id == id && !player[i].Lat.equals("")){
-//                    PaintBoard.target[0] = Double.parseDouble(player[i].Lat); //本人座標
-//                    PaintBoard.target[1] = Double.parseDouble(player[i].Lng);
-                    PaintBoard.target[0] = Double.parseDouble(121.187504+"");
-                    PaintBoard.target[1] = Double.parseDouble(24.966835+"");
-                }else {
-                    double[] temp = {Double.parseDouble(player[i].Lat), Double.parseDouble(player[i].Lng)};
-                    PaintBoard.other.add(temp); //  其他人座標
+                if(!player[i].Lat.equals("")) {
+                    if (player[i].id == id) {
+                        PaintBoard.target[0] = Double.parseDouble(player[i].Lat); //本人座標
+                        PaintBoard.target[1] = Double.parseDouble(player[i].Lng);
+//                    PaintBoard.target[0] = Double.parseDouble(121.187504+"");
+//                    PaintBoard.target[1] = Double.parseDouble(24.966835+"");
+                    } else {
+                        double[] temp = {Double.parseDouble(player[i].Lat), Double.parseDouble(player[i].Lng)};
+                        PaintBoard.other.add(temp); //  其他人座標
+                    }
                 }
             } else
                 latView[i].setText("此位置尚未加入");
-
         }
     }
 
@@ -209,13 +210,13 @@ public class MainActivity extends AppCompatActivity {
                 clientSocket = new Socket(serverIp, serverPort);
                 DataInputStream input = new DataInputStream(clientSocket.getInputStream());
                 ServerData = input.readUTF();
+                try {
+                    JSONObject transfer = new JSONObject(ServerData);
+                    id = Integer.parseInt(transfer.getString("id"));
+                } catch (JSONException e) {e.printStackTrace();}
                 handler.post(new Runnable() {
                     public void run() {
                         updateData(ServerData);
-                        for (int i = 0; i < 4; i++) { // 找到他是P幾
-                            if (player[i] != null && player[i].ip.equals(clientSocket.getLocalSocketAddress().toString()))
-                                id = player[i].id;
-                        }
                         mTitle.setText("Input Location(You are P" + id + ")");
                     }
                 });
