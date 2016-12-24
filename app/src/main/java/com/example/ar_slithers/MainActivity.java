@@ -1,7 +1,9 @@
 package com.example.ar_slithers;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
@@ -51,29 +53,43 @@ public class MainActivity extends AppCompatActivity {
 
     private player[] player = new player[4];
     private int id  = 999;
+    private String serverIp = "192.168.43.234"; // 預設是  輸入 伺服器名稱
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        // id 對應區
-        viewIdToObject();
-        // 事件宣告
-        createEvents();
-        // 取得系統定位服務
-        LocationManager locationManager = (LocationManager) (this.getSystemService(Context.LOCATION_SERVICE));
-        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-                || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-            // 如果GPS或網路定位開啟，呼叫locationServiceInitial()更新位置
-            locationServiceInitial();
-        } else {
-            Toast.makeText(this, "請開啟定位服務", Toast.LENGTH_LONG).show();
-            startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)); // 開啟設定頁面
-            setContentView(R.layout.activity_gps);
-        }
-        //連線
-        thread = new Thread(Connection); // 賦予執行緒工作
-        thread.start();
+        final EditText inputIp = new EditText(this);
+        inputIp.setText(serverIp);
+        new AlertDialog.Builder(this)
+                .setTitle("Server IP")
+                .setView(inputIp)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        serverIp = inputIp.getText().toString();
+                        // id 對應區
+                        viewIdToObject();
+                        // 事件宣告
+                        createEvents();
+                        // 取得系統定位服務
+                        LocationManager locationManager
+                                = (LocationManager) (MainActivity.this.getSystemService(Context.LOCATION_SERVICE));
+                        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+                                || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                            // 如果GPS或網路定位開啟，呼叫locationServiceInitial()更新位置
+                            locationServiceInitial();
+                        } else {
+                            Toast.makeText(MainActivity.this, "請開啟定位服務", Toast.LENGTH_LONG).show();
+                            startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)); // 開啟設定頁面
+                            setContentView(R.layout.activity_gps);
+                        }
+                        //連線
+                        thread = new Thread(Connection); // 賦予執行緒工作
+                        thread.start();
+                    }
+                })
+                .show();
     }
 
     // id 對應區
@@ -202,7 +218,6 @@ public class MainActivity extends AppCompatActivity {
 
     private Runnable Connection = new Runnable() {
         int serverPort = 12345;
-        String serverIp = "192.168.0.106";  // 預設是  輸入 伺服器名稱
         String ServerData = "";
 
         public void run() {
@@ -210,6 +225,7 @@ public class MainActivity extends AppCompatActivity {
                 clientSocket = new Socket(serverIp, serverPort);
                 DataInputStream input = new DataInputStream(clientSocket.getInputStream());
                 ServerData = input.readUTF();
+
                 try {
                     JSONObject transfer = new JSONObject(ServerData);
                     id = Integer.parseInt(transfer.getString("id"));
