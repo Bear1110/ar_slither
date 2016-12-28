@@ -20,6 +20,9 @@ public class SensorActivity extends AppCompatActivity implements SensorEventList
     private SensorManager sensorManager;
     private Sensor gyrosensor, gsensor, msensor;
 
+    float[] accelerometerValues = new float[3];
+    float[] magneticFieldValues = new float[3];
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,11 +40,11 @@ public class SensorActivity extends AppCompatActivity implements SensorEventList
 
         //抓 g sensor 的資料
         gsensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        sensorManager.registerListener(this, gsensor, SensorManager.SENSOR_DELAY_GAME);
+        sensorManager.registerListener(this, gsensor, SensorManager.SENSOR_DELAY_UI);
 
         //抓 magnet sensor 的資料
         msensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        sensorManager.registerListener(this, msensor, SensorManager.SENSOR_DELAY_GAME);
+        sensorManager.registerListener(this, msensor, SensorManager.SENSOR_DELAY_UI);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -49,10 +52,8 @@ public class SensorActivity extends AppCompatActivity implements SensorEventList
     public void onSensorChanged(SensorEvent event) {
         String x, y, z;
 
-        float[] accelerometerValues = new float[3];
-        float[] magneticFieldValues = new float[3];
         float[] values = new float[3];
-        float[] rotaionMatrix = new float[9];
+        float[] rotationMatrix = new float[9];
 
         DecimalFormat df = new DecimalFormat("#.###");
 
@@ -71,6 +72,9 @@ public class SensorActivity extends AppCompatActivity implements SensorEventList
 
             //存入矩陣
             accelerometerValues = event.values;
+            float temp = accelerometerValues[1];
+            accelerometerValues[1] = accelerometerValues[2];
+            accelerometerValues[2] = temp;
         }
 
         if(event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD){ // m sensor
@@ -81,13 +85,26 @@ public class SensorActivity extends AppCompatActivity implements SensorEventList
 
             //存入矩陣
             magneticFieldValues = event.values;
+            float temp = magneticFieldValues[1];
+            magneticFieldValues[1] = magneticFieldValues[2];
+            magneticFieldValues[2] = temp;
         }
 
-        SensorManager.getRotationMatrix(rotaionMatrix, null, accelerometerValues, magneticFieldValues);
-        SensorManager.getOrientation(rotaionMatrix, values);
+        calculateOrientation();
+    }
 
-        values[0]=(float)Math.toDegrees(values[0]);
-        directionShowInfo("x="+values[0]);
+    private  void calculateOrientation() {
+        float[] values = new float[3];
+        float[] R = new float[9];
+
+        SensorManager.getRotationMatrix(R, null, accelerometerValues, magneticFieldValues);
+        SensorManager.getOrientation(R, values);
+
+        float degree=(float)Math.toDegrees(values[0]);
+        //BigDecimal value= new BigDecimal(values[0]);
+        //x = (float) Math.sin(value.doubleValue()) * 150 + 400;
+        directionShowInfo(String.valueOf(degree));
+
     }
 
     @Override

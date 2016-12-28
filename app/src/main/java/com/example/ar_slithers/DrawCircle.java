@@ -23,7 +23,7 @@ import android.widget.TextView;
 public class DrawCircle extends View implements SensorEventListener {
 
     private float x = 400,y = 400;
-    private int r = 150;
+    private int r = 120;
     private Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private SensorManager sensorManager;
     private Sensor gsensor, msensor;
@@ -35,14 +35,14 @@ public class DrawCircle extends View implements SensorEventListener {
     public DrawCircle(Context context, TextView info, SensorManager sensor) {
         super(context);
         mPaint.setColor(Color.RED);
-        //��g sensor�����
+        //抓 g sensor 的資料
         sensorManager = sensor;
         gsensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        sensorManager.registerListener(this, gsensor, SensorManager.SENSOR_DELAY_GAME);
+        sensorManager.registerListener(this, gsensor, SensorManager.SENSOR_DELAY_UI);
 
         //抓 magnet sensor 的資料
         msensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        sensorManager.registerListener(this, msensor, SensorManager.SENSOR_DELAY_GAME);
+        sensorManager.registerListener(this, msensor, SensorManager.SENSOR_DELAY_UI);
 
         this.info = info;
     }
@@ -67,34 +67,40 @@ public class DrawCircle extends View implements SensorEventListener {
 
         DecimalFormat df = new DecimalFormat("#.#");
 
-
-
-
-
         if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
         {
-            BigDecimal xvalue= new BigDecimal(event.values[0]);
-            //xvalue=xvalue.setScale(1, BigDecimal.ROUND_HALF_UP);
-            x = (float) (xvalue.doubleValue())*140 + 400;
-            BigDecimal yvalue= new BigDecimal(event.values[2]);
-            //yvalue=yvalue.setScale(1, BigDecimal.ROUND_HALF_UP);
-            y = (-event.values[2])*140 + 400;
+            float xFormer = Float.valueOf(df.format(event.values[0]));
+            float xLatter = event.values[0] - xFormer;
+
+            x = xFormer*140 + xLatter/10 + 400;
+
+            float yFormer = Float.valueOf(df.format(event.values[2]));
+            float yLatter = event.values[2] - yFormer;
+            y = (-yFormer)*140 - yLatter/10 + 400;
 
             accelerometerValues = event.values;
 
-            info.setText("x: "+event.values[0]+" y: "+event.values[1]+" z: "+event.values[2]);
+            // swap y and z
+            float temp = accelerometerValues[1];
+            accelerometerValues[1] = accelerometerValues[2];
+            accelerometerValues[2] = temp;
+
+            info.setText("x: "+x+" y: "+y/*+" z: "+event.values[2]*/);
             //z += arg0.values[2];
         }
 
-        String x, y, z;
+        String xMagnetic, yMagnetic, zMagnetic;
 
         if(event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD){ // m sensor
-            x = df.format(event.values[0]);
-            y = df.format(event.values[1]);
-            z = df.format(event.values[2]);
+            xMagnetic = df.format(event.values[0]);
+            yMagnetic = df.format(event.values[1]);
+            zMagnetic = df.format(event.values[2]);
 
             //存入矩陣
             magneticFieldValues = event.values;
+            float temp = magneticFieldValues[1];
+            magneticFieldValues[1] = magneticFieldValues[2];
+            magneticFieldValues[2] = temp;
         }
 
         calculateOrientation();
@@ -108,10 +114,9 @@ public class DrawCircle extends View implements SensorEventListener {
         SensorManager.getRotationMatrix(R, null, accelerometerValues, magneticFieldValues);
         SensorManager.getOrientation(R, values);
 
-        values[0]=(float)Math.toDegrees(values[0]);
-        //BigDecimal value= new BigDecimal(values[0]);
-        //x = (float) Math.sin(value.doubleValue()) * 150 + 400;
-        x = -values[0] * 10 + 400;
-
+        double degree = Math.toDegrees(values[0]);
+        double radian = Math.PI * degree / 180;
+        x = (float) Math.sin(radian/2) * 550 * 2 + 50; // 150 => distance
+        info.setText("x: "+x+" y: "+y+" d: "+degree);
     }
 }
