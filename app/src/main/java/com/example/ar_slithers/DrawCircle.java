@@ -14,23 +14,24 @@ import android.hardware.SensorManager;
 import android.icu.math.BigDecimal;
 import android.icu.text.DecimalFormat;
 import android.os.Build;
+import android.speech.tts.Voice;
 import android.view.View;
 import android.widget.TextView;
-
-//import java.lang.Math;
 
 @SuppressLint("NewApi")
 public class DrawCircle extends View implements SensorEventListener {
 
-    private float x = 400,y = 400;
+    private float x = getWidth(),y = getWidth();
     private int r = 120;
+    private static float otherRadien;
+
     private Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private SensorManager sensorManager;
     private Sensor gsensor, msensor;
     private TextView info;
 
-    float[] accelerometerValues = new float[3];
-    float[] magneticFieldValues = new float[3];
+    private float[] accelerometerValues = new float[3];
+    private float[] magneticFieldValues = new float[3];
 
     public DrawCircle(Context context, TextView info, SensorManager sensor) {
         super(context);
@@ -42,7 +43,7 @@ public class DrawCircle extends View implements SensorEventListener {
 
         //抓 magnet sensor 的資料
         msensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        sensorManager.registerListener(this, msensor, SensorManager.SENSOR_DELAY_UI);
+        sensorManager.registerListener(this, msensor, 300);
 
         this.info = info;
     }
@@ -67,16 +68,17 @@ public class DrawCircle extends View implements SensorEventListener {
 
         DecimalFormat df = new DecimalFormat("#.#");
 
+        getOtherDegree();
+
         if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
         {
             float xFormer = Float.valueOf(df.format(event.values[0]));
             float xLatter = event.values[0] - xFormer;
-
             x = xFormer*140 + xLatter/10 + 400;
 
             float yFormer = Float.valueOf(df.format(event.values[2]));
             float yLatter = event.values[2] - yFormer;
-            y = (-yFormer)*140 - yLatter/10 + 400;
+            y = (-yFormer)*140 - yLatter/10 + getHeight()/2;
 
             accelerometerValues = event.values;
 
@@ -85,8 +87,7 @@ public class DrawCircle extends View implements SensorEventListener {
             accelerometerValues[1] = accelerometerValues[2];
             accelerometerValues[2] = temp;
 
-            info.setText("x: "+x+" y: "+y/*+" z: "+event.values[2]*/);
-            //z += arg0.values[2];
+            //info.setText("x: "+x+" y: "+y/*+" z: "+event.values[2]*/);
         }
 
         String xMagnetic, yMagnetic, zMagnetic;
@@ -115,8 +116,17 @@ public class DrawCircle extends View implements SensorEventListener {
         SensorManager.getOrientation(R, values);
 
         double degree = Math.toDegrees(values[0]);
-        double radian = Math.PI * degree / 180;
-        x = (float) Math.sin(radian/2) * 550 * 2 + 50; // 150 => distance
-        info.setText("x: "+x+" y: "+y+" d: "+degree);
+        double radian = Math.toRadians(180) - otherRadien - values[0];
+        x = - (float) Math.sin(radian/2) * 600 * 2 + getWidth()/2;
+        info.setText(Math.toDegrees(radian) +"");
+    }
+
+    private void getOtherDegree() {
+        double xDistance = 3, yDistance = 4;
+        if (!PaintBoard.other.isEmpty()) {
+            xDistance = PaintBoard.other.get(0)[0] - PaintBoard.target[0];
+            yDistance = PaintBoard.other.get(0)[1] - PaintBoard.target[1];
+        }
+        otherRadien = (float) Math.toRadians(yDistance/xDistance);
     }
 }
