@@ -117,11 +117,11 @@ public class DrawCircle extends View implements SensorEventListener {
 
         double degree = Math.toDegrees(values[0]);
         degree -= 90;
-        if (degree < 0) degree += 360;
+        if (degree < -180) degree += 360;
 
         double angle = otherDegree - degree;
         double radian = Math.toRadians(angle);
-        x = - (float) Math.sin(radian/2) * 400 * 2 + getWidth()/2;
+        x = - (float) Math.sin(radian/2) * 1000 * 2 + getWidth()/2;
         info.setText(otherDegree + " " + degree + "");
     }
 
