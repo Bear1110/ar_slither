@@ -23,7 +23,7 @@ public class DrawCircle extends View implements SensorEventListener {
 
     private float x = getWidth(),y = getWidth();
     private int r = 120;
-    private static float otherRadien;
+    private static float otherDegree;
 
     private Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private SensorManager sensorManager;
@@ -108,7 +108,7 @@ public class DrawCircle extends View implements SensorEventListener {
 
     }
 
-    private  void calculateOrientation() {
+    private void calculateOrientation() {
         float[] values = new float[3];
         float[] R = new float[9];
 
@@ -116,9 +116,13 @@ public class DrawCircle extends View implements SensorEventListener {
         SensorManager.getOrientation(R, values);
 
         double degree = Math.toDegrees(values[0]);
-        double radian = Math.toRadians(180) - otherRadien - values[0];
-        x = - (float) Math.sin(radian/2) * 600 * 2 + getWidth()/2;
-        info.setText(Math.toDegrees(radian) +"");
+        degree -= 90;
+        if (degree < 0) degree += 360;
+
+        double angle = otherDegree - degree;
+        double radian = Math.toRadians(angle);
+        x = - (float) Math.sin(radian/2) * 400 * 2 + getWidth()/2;
+        info.setText(otherDegree + " " + degree + "");
     }
 
     private void getOtherDegree() {
@@ -127,6 +131,7 @@ public class DrawCircle extends View implements SensorEventListener {
             xDistance = PaintBoard.other.get(0)[0] - PaintBoard.target[0];
             yDistance = PaintBoard.other.get(0)[1] - PaintBoard.target[1];
         }
-        otherRadien = (float) Math.toRadians(yDistance/xDistance);
+        otherDegree = (float) Math.toDegrees( Math.atan(yDistance/xDistance) );
+        if (xDistance < 0) otherDegree += 180;
     }
 }
