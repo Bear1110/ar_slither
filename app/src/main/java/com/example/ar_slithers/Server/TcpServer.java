@@ -1,3 +1,4 @@
+package com.example.ar_slithers.Server;
 import java.io.*;
 import java.net.*;
 import java.util.Stack;
@@ -8,6 +9,7 @@ import org.json.*;
  * Created by Bear on 2016/12/12.
  */
 import com.google.gson.Gson;
+
 public class TcpServer {
     public static final int LISTEN_PORT = 12345;
     public player[] player = new player[4];
@@ -72,7 +74,8 @@ public class TcpServer {
 
             if ( empty.size() > 0 ) {
                 int thisId = empty.pop();  // 這是把 stack pop出來給他 算是發id
-                thisPlayer = new player( (thisId+1) , clientSocket.getRemoteSocketAddress() + "");
+                player[thisId] = new player( (thisId+1) , clientSocket.getRemoteSocketAddress() + "");
+                thisPlayer = player[thisId]; //這是有意義的 因為要存取到 全部
                 // 下面要呼叫用 thisPlayer
                 try {
                     input = new DataInputStream(this.clientSocket.getInputStream());
