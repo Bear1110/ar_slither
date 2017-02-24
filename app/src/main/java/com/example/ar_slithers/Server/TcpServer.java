@@ -1,4 +1,3 @@
-package com.example.ar_slithers.Server;
 import java.io.*;
 import java.net.*;
 import java.util.Stack;
@@ -9,11 +8,11 @@ import org.json.*;
  * Created by Bear on 2016/12/12.
  */
 import com.google.gson.Gson;
-
 public class TcpServer {
     public static final int LISTEN_PORT = 12345;
     public player[] player = new player[4];
     private Stack<Integer> empty = new Stack<Integer>();
+    public double[] mapCenter = {0,0};
 
     public void listenRequest() {
         for(int i = 3 ; i >= 0 ; i--){
@@ -73,13 +72,12 @@ public class TcpServer {
 
             if ( empty.size() > 0 ) {
                 int thisId = empty.pop();  // 這是把 stack pop出來給他 算是發id
-                player[thisId] = new player( (thisId+1) , clientSocket.getRemoteSocketAddress() + "");
-                thisPlayer = player[thisId];
-                // 下面要呼叫用 player[thisPlayer]
+                thisPlayer = new player( (thisId+1) , clientSocket.getRemoteSocketAddress() + "");
+                // 下面要呼叫用 thisPlayer
                 try {
                     input = new DataInputStream(this.clientSocket.getInputStream());
                     output = new DataOutputStream(this.clientSocket.getOutputStream());
-                    ServerData.put("id",thisPlayer.id);
+                    ServerData.put("id",thisPlayer.id);//第一次 portocal 有 要傳 id 過去
                     ServerData.put("Data", gson.toJson(player));
                     output.writeUTF(ServerData.toString());
                     output.flush();
@@ -96,7 +94,12 @@ public class TcpServer {
                             JSONObject messageJSON = new JSONObject(message);
                             thisPlayer.Lat = messageJSON.get("lat").toString();
                             thisPlayer.Lng = messageJSON.get("lng").toString();
+                            if(mapCenter[0]==0 && thisPlayer.Lat != ""){//初始化地圖座標中心
+                                mapCenter[0] = Double.parseDouble(thisPlayer.Lat);
+                                mapCenter[1] = Double.parseDouble(thisPlayer.Lng);
+                            }
                             ServerData.put("Data", gson.toJson(player));
+                            ServerData.put("mapCenter", gson.toJson(mapCenter));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

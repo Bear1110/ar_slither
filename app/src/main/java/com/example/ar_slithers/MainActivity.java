@@ -201,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
                 latView[i].setText(player[i].Lat);
                 lngView[i].setText(player[i].Lng);
                 if(!player[i].Lat.equals("")) {
-                    if (player[i].id == id) {
+                    if (player[i].id == id) {//自己
                         PaintBoard.target[0] = Double.parseDouble(player[i].Lat); //本人座標
                         PaintBoard.target[1] = Double.parseDouble(player[i].Lng);
 //                    PaintBoard.target[0] = Double.parseDouble(121.187504+"");
