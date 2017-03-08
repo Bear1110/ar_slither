@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
     private player[] player = new player[4];
     private int id  = 999;
-    private String serverIp = "192.168.43.234"; // 預設是  輸入 伺服器名稱
+    private String serverIp = "192.168.0.106"; // 預設是  輸入 伺服器名稱
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -202,12 +202,11 @@ public class MainActivity extends AppCompatActivity {
                 lngView[i].setText(player[i].Lng);
                 if(!player[i].Lat.equals("")) {
                     if (player[i].id == id) {//自己
-                        PaintBoard.target[0] = Double.parseDouble(player[i].Lat); //本人座標
-                        PaintBoard.target[1] = Double.parseDouble(player[i].Lng);
-//                    PaintBoard.target[0] = Double.parseDouble(121.187504+"");
-//                    PaintBoard.target[1] = Double.parseDouble(24.966835+"");
+                        PaintBoard.target[0] = player[i].map[0]; //本人座標
+                        PaintBoard.target[1] = player[i].map[1];
                     } else {
-                        double[] temp = {Double.parseDouble(player[i].Lat), Double.parseDouble(player[i].Lng)};
+//                        double[] temp = {Double.parseDouble(player[i].Lat), Double.parseDouble(player[i].Lng)};
+                        double[] temp = {player[i].map[0], player[i].map[1]};
                         PaintBoard.other.add(temp); //  其他人座標
                     }
                 }
@@ -216,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private Runnable Connection = new Runnable() {
+    private Runnable Connection = new Runnable()/*傳送值用的*/ {
         int serverPort = 12345;
         String ServerData = "";
 
@@ -242,8 +241,10 @@ public class MainActivity extends AppCompatActivity {
                         DataOutputStream output = new DataOutputStream(clientSocket.getOutputStream());
                         JSONObject ClientData = new JSONObject();
                         try {
-                            ClientData.put("lat", mLat_input.getText());
-                            ClientData.put("lng", mLng_input.getText());
+//                            ClientData.put("lat", mLat_input.getText());
+//                            ClientData.put("lng", mLng_input.getText());
+                            ClientData.put("lat", "121.187504");
+                            ClientData.put("lng", "24.966835");
                         } catch (Exception e) {e.printStackTrace();}
                         // 傳東西給server
                         output.writeUTF(ClientData.toString());

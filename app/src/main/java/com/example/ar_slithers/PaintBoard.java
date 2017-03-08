@@ -38,8 +38,8 @@ public class PaintBoard extends View {
         canvas.drawText("N",center[0],40,paint);
         //畫其他人的點
         for(int i = 0 ; i < other.size() ; i ++){
-            float x = (float) (other.get(i)[0]-target[0])*120000;
-            float y = (float) -(other.get(i)[1]-target[1])*120000;
+            float x = (float) (other.get(i)[0]-target[0]);
+            float y = (float) -(other.get(i)[1]-target[1]);
             paint.setColor(Color.RED);
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(5);

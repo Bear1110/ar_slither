@@ -1,9 +1,11 @@
 package com.example.ar_slithers.Server;
+
 import java.io.*;
 import java.net.*;
 import java.util.Stack;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import com.example.ar_slithers.player;
 import org.json.*;
 /**
  * Created by Bear on 2016/12/12.
@@ -20,15 +22,20 @@ public class TcpServer {
         for(int i = 3 ; i >= 0 ; i--){
             empty.push(i);
         }
-//        player[1] = new player( 2 ,  "");
-//        player[1].Lat = "121.187637"; //水滴
-//        player[1].Lng = "24.967377";
-//        player[2] = new player( 3 ,  "");
-//        player[2].Lat = "121.187596"; //停車場
-//        player[2].Lng = "24.966342";
-//        player[3] = new player( 4 ,  "");
-//        player[3].Lat = "121.186685"; //貨梯
-//        player[3].Lng = "24.967114";
+//        player[0] = new player( 1 ,  "");
+//        player[0].Lat = "121.187504"; //metting
+//        player[0].Lng = "24.966835";
+        player[1] = new player( 2 ,  "");
+        player[1].map[0] = (121.187637 - 121.187504)*120000; //水滴
+        player[1].map[1] = (24.967377 - 24.966835)*120000;
+        player[2] = new player( 3 ,  "");
+        player[2].map[0] = (121.187596 - 121.187504)*120000; //停車場
+        player[2].map[1] = (24.966342 - 24.966835)*120000;
+        player[3] = new player( 4 ,  "");
+        player[3].Lat = "121.186685"; //貨梯
+        player[3].Lng = "24.967114";
+        player[1].Lat = "121.187637"; //水滴
+        player[1].Lng = "24.967377";
         ServerSocket serverSocket = null;
         ExecutorService threadExecutor = Executors.newFixedThreadPool(20);
         try {
@@ -77,7 +84,7 @@ public class TcpServer {
                 player[thisId] = new player( (thisId+1) , clientSocket.getRemoteSocketAddress() + "");
                 thisPlayer = player[thisId]; //這是有意義的 因為要存取到 全部
                 // 下面要呼叫用 thisPlayer
-                try {
+                try {//這是第一次傳送數據
                     input = new DataInputStream(this.clientSocket.getInputStream());
                     output = new DataOutputStream(this.clientSocket.getOutputStream());
                     ServerData.put("id",thisPlayer.id);//第一次 portocal 有 要傳 id 過去
@@ -97,9 +104,13 @@ public class TcpServer {
                             JSONObject messageJSON = new JSONObject(message);
                             thisPlayer.Lat = messageJSON.get("lat").toString();
                             thisPlayer.Lng = messageJSON.get("lng").toString();
-                            if(mapCenter[0]==0 && thisPlayer.Lat != ""){//初始化地圖座標中心
-                                mapCenter[0] = Double.parseDouble(thisPlayer.Lat);
-                                mapCenter[1] = Double.parseDouble(thisPlayer.Lng);
+                            if( !messageJSON.get("lat").toString().equals("")){
+                                if(mapCenter[0]==0){//初始化地圖座標中心
+                                    mapCenter[0] = Double.parseDouble(thisPlayer.Lat);
+                                    mapCenter[1] = Double.parseDouble(thisPlayer.Lng);
+                                }
+                                thisPlayer.map[0] = (Double.parseDouble(thisPlayer.Lat) - mapCenter[0])*120000;
+                                thisPlayer.map[1] = (Double.parseDouble(thisPlayer.Lng) - mapCenter[1])*120000;
                             }
                             ServerData.put("Data", gson.toJson(player));
                             ServerData.put("mapCenter", gson.toJson(mapCenter));
@@ -138,16 +149,5 @@ public class TcpServer {
                 System.out.println("已經滿人了!!!"+clientSocket.getRemoteSocketAddress()+"離開連線");
             }
         }
-    }
-
-    public class player {
-        public player(int id, String ip) {
-            this.id = id;
-            this.ip = ip;
-        }
-        public int id;
-        public String Lat = "0.0";
-        public String Lng = "0.0";
-        public String ip = "test";
     }
 }
