@@ -196,6 +196,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (JSONException e) {e.printStackTrace();}
 
         PaintBoard.other.clear();
+        PaintMap.other_point.clear();
         for (int i = 0; i < 4; i++) {
             if (player[i] != null) {
                 latView[i].setText(player[i].Lat);
@@ -208,6 +209,7 @@ public class MainActivity extends AppCompatActivity {
 //                        double[] temp = {Double.parseDouble(player[i].Lat), Double.parseDouble(player[i].Lng)};
                         double[] temp = {player[i].map[0], player[i].map[1]};
                         PaintBoard.other.add(temp); //  其他人座標
+                        PaintMap.other_point.add(temp);
                     }
                 }
             } else
