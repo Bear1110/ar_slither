@@ -24,18 +24,18 @@ public class TcpServer {
         }
 //        player[0] = new player( 1 ,  "");
 //        player[0].Lat = "121.187504"; //metting
-//        player[0].Lng = "24.966835";
-        player[1] = new player( 2 ,  "");
-        player[1].map[0] = (121.187637 - 121.187504)*120000; //水滴
-        player[1].map[1] = (24.967377 - 24.966835)*120000;
-        player[2] = new player( 3 ,  "");
-        player[2].map[0] = (121.187596 - 121.187504)*120000; //停車場
-        player[2].map[1] = (24.966342 - 24.966835)*120000;
-        player[3] = new player( 4 ,  "");
-        player[3].Lat = "121.186685"; //貨梯
-        player[3].Lng = "24.967114";
-        player[1].Lat = "121.187637"; //水滴
-        player[1].Lng = "24.967377";
+////        player[0].Lng = "24.966835";
+//        player[1] = new player( 2 ,  "");
+//        player[1].map[0] = (121.187637 - 121.187504)*120000; //水滴
+//        player[1].map[1] = (24.967377 - 24.966835)*120000;
+//        player[2] = new player( 3 ,  "");
+//        player[2].map[0] = (121.187596 - 121.187504)*120000; //停車場
+//        player[2].map[1] = (24.966342 - 24.966835)*120000;
+//        player[3] = new player( 4 ,  "");
+//        player[3].Lat = "121.186685"; //貨梯
+//        player[3].Lng = "24.967114";
+//        player[1].Lat = "121.187637"; //水滴
+//        player[1].Lng = "24.967377";
         ServerSocket serverSocket = null;
         ExecutorService threadExecutor = Executors.newFixedThreadPool(20);
         try {

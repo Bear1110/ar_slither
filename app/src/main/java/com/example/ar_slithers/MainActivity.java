@@ -243,10 +243,10 @@ public class MainActivity extends AppCompatActivity {
                         DataOutputStream output = new DataOutputStream(clientSocket.getOutputStream());
                         JSONObject ClientData = new JSONObject();
                         try {
-//                            ClientData.put("lat", mLat_input.getText());
-//                            ClientData.put("lng", mLng_input.getText());
-                            ClientData.put("lat", "121.187504");
-                            ClientData.put("lng", "24.966835");
+                            ClientData.put("lat", mLat_input.getText());
+                            ClientData.put("lng", mLng_input.getText());
+//                            ClientData.put("lat", "121.187504");
+//                            ClientData.put("lng", "24.966835");
                         } catch (Exception e) {e.printStackTrace();}
                         // 傳東西給server
                         output.writeUTF(ClientData.toString());

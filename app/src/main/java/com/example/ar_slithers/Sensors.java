@@ -29,9 +29,7 @@ public class Sensors implements SensorEventListener {
     private float[] accelerometerValues = new float[3];
     private float[] magneticFieldValues = new float[3];
 
-    public Sensors(float width, float height, TextView info, SensorManager sensor) {
-        this.width = width;
-        this.height = height;
+    public Sensors(TextView info, SensorManager sensor) {
         mPaint.setColor(Color.RED);
         //抓 g sensor 的資料
         sensorManager = sensor;
@@ -65,7 +63,7 @@ public class Sensors implements SensorEventListener {
 
             float yFormer = Float.valueOf(df.format(event.values[2]));
             float yLatter = event.values[2] - yFormer;
-            y = (-yFormer)*140 - yLatter/10 + height/2;
+            y = (-yFormer)*140 - yLatter/10 + height;
 
             accelerometerValues = event.values;
 
@@ -106,7 +104,7 @@ public class Sensors implements SensorEventListener {
         float angle = otherDegree - degree;
         double radian = Math.toRadians(angle);
         x = - (float) Math.sin(radian/2) * 1000 * 2 + width/2;
-        info.setText(otherDegree + " " + degree + " ");
+        info.setText(otherDegree + " " + degree + " " + width +" "+height);
     }
 
     private void getOtherDegree() {
@@ -117,5 +115,10 @@ public class Sensors implements SensorEventListener {
         }
         otherDegree = (float) Math.toDegrees( Math.atan(yDistance/xDistance) );
         if (xDistance < 0) otherDegree += 180;
+    }
+
+    public void setScreenSize(float width, float height) {
+        this.width = width;
+        this.height = height;
     }
 }

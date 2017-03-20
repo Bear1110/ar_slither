@@ -22,7 +22,7 @@ public class DrawCircle extends View {
         super(context);
         mPaint.setColor(Color.RED);
         mPaint.setTextSize(30);
-        sensors = new Sensors(getWidth(), getHeight(), info, sensor);
+        sensors = new Sensors(info, sensor);
         thread = new Thread(SlowDown);
         thread.start();
     }
@@ -30,7 +30,7 @@ public class DrawCircle extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        //canvas.drawText(x+" "+y, 200, 500, mPaint);
+        //canvas.drawText(x+" "+y+" "+getHeight(), 200, 800, mPaint);
         canvas.drawCircle(x, y, r, mPaint);
         canvas.drawCircle(x-75, y, r, mPaint);
         canvas.drawCircle(x+75, y, r, mPaint);
@@ -43,6 +43,7 @@ public class DrawCircle extends View {
             while (true) {
                 float newX = sensors.x;
                 float newY = sensors.y;
+                sensors.setScreenSize(getWidth(), getHeight());
                 try {
                     for (int i=0; i<5; i++) {
                         x += (newX-x)*(i+1)/5;
