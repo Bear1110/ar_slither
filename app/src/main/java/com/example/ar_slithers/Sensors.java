@@ -1,8 +1,6 @@
 package com.example.ar_slithers;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.hardware.Sensor;
@@ -10,15 +8,16 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.icu.text.DecimalFormat;
-import android.view.View;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 @SuppressLint("NewApi")
 public class Sensors implements SensorEventListener {
 
-    public float x, y;
+    // otherPos: x, y, degree => maybe transform to object, not arraylist
+    public static ArrayList<float[]> otherPos = new ArrayList<>();
     private float width, height;
-    private static float otherDegree;
     private float degree, preDegree = 0;
 
     private Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -59,11 +58,14 @@ public class Sensors implements SensorEventListener {
         {
             float xFormer = Float.valueOf(df.format(event.values[0]));
             float xLatter = event.values[0] - xFormer;
-            x = xFormer*140 + xLatter/10 + width/2;
 
             float yFormer = Float.valueOf(df.format(event.values[2]));
             float yLatter = event.values[2] - yFormer;
-            y = (-yFormer)*140 - yLatter/10 + height;
+
+            for (float[] pos: otherPos) {
+                pos[0] = xFormer*140 + xLatter/10 + width/2;
+                pos[1] = (-yFormer)*140 - yLatter/10 + height;
+            }
 
             accelerometerValues = event.values;
 
@@ -71,8 +73,6 @@ public class Sensors implements SensorEventListener {
             float temp = accelerometerValues[1];
             accelerometerValues[1] = accelerometerValues[2];
             accelerometerValues[2] = temp;
-
-            //info.setText("x: "+x+" y: "+y/*+" z: "+event.values[2]*/);
         }
 
         if(event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD){ // m sensor
@@ -101,20 +101,24 @@ public class Sensors implements SensorEventListener {
         if (Math.abs(preDegree-degree) < 2) degree = preDegree;
         else preDegree = degree;
 
-        float angle = otherDegree - degree;
-        double radian = Math.toRadians(angle);
-        x = - (float) Math.sin(radian/2) * 1000 * 2 + width/2;
-        info.setText(otherDegree + " " + degree + " " + width +" "+height);
+        for (float[] pos: otherPos) {
+            float angle = pos[2] - degree;
+            double radian = Math.toRadians(angle);
+            pos[0] = - (float) Math.sin(radian/2) * 1000 * 2 + width/2;
+        }
+
+        info.setText(otherPos.get(0)[2] + " " + degree);
     }
 
     private void getOtherDegree() {
-        double xDistance = 3, yDistance = 4;
-        if (!PaintBoard.other.isEmpty()) {
-            xDistance = PaintBoard.other.get(0)[0] - PaintBoard.target[0];
-            yDistance = PaintBoard.other.get(0)[1] - PaintBoard.target[1];
+        for (int i=0; i<otherPos.size(); i++) {
+
+            double xDistance = PaintBoard.other.get(i)[0] - PaintBoard.target[0];
+            double yDistance = PaintBoard.other.get(i)[1] - PaintBoard.target[1];
+
+            otherPos.get(i)[2] = (float) Math.toDegrees( Math.atan(yDistance/xDistance) );
+            if (xDistance < 0) otherPos.get(i)[2] += 180;
         }
-        otherDegree = (float) Math.toDegrees( Math.atan(yDistance/xDistance) );
-        if (xDistance < 0) otherDegree += 180;
     }
 
     public void setScreenSize(float width, float height) {

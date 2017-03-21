@@ -9,9 +9,13 @@ import android.hardware.SensorManager;
 import android.view.View;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class DrawCircle extends View {
 
-    private float x = getWidth(),y = getWidth();
+    private float[] initial = {getWidth(), getHeight()};
+    private ArrayList<float[]> snakesPos = new ArrayList<>();
+
     private int r = 120;
     private Sensors sensors;
     private Thread thread;
@@ -31,9 +35,12 @@ public class DrawCircle extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         //canvas.drawText(x+" "+y+" "+getHeight(), 200, 800, mPaint);
-        canvas.drawCircle(x, y, r, mPaint);
-        canvas.drawCircle(x-75, y, r, mPaint);
-        canvas.drawCircle(x+75, y, r, mPaint);
+        for (float[] pos: snakesPos) {
+            canvas.drawCircle(pos[0], pos[1], r, mPaint);
+            canvas.drawCircle(pos[0]-75, pos[1], r, mPaint);
+            canvas.drawCircle(pos[0]+75, pos[1], r, mPaint);
+        }
+
         invalidate();
     }
 
@@ -41,13 +48,21 @@ public class DrawCircle extends View {
         @Override
         public void run() {
             while (true) {
-                float newX = sensors.x;
-                float newY = sensors.y;
                 sensors.setScreenSize(getWidth(), getHeight());
+                if (PaintBoard.other.size() > snakesPos.size()) {
+                    snakesPos.add(initial);
+                    Sensors.otherPos.add(initial);
+                }
+
                 try {
                     for (int i=0; i<5; i++) {
-                        x += (newX-x)*(i+1)/5;
-                        y += (newY-y)*(i+1)/5;
+
+                        for (int j=0; j<snakesPos.size(); j++) {
+                            float newX = Sensors.otherPos.get(j)[0];
+                            float newY = Sensors.otherPos.get(j)[0];
+                            snakesPos.get(j)[0] += (newX-snakesPos.get(j)[0])*(i+1)/5;
+                            snakesPos.get(j)[1] += (newY-snakesPos.get(j)[1])*(i+1)/5;
+                        }
                         Thread.sleep(20);
                     }
                 } catch (InterruptedException e) {
