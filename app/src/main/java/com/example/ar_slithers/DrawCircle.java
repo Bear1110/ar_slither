@@ -14,6 +14,7 @@ import java.util.ArrayList;
 public class DrawCircle extends View {
 
     private float[] initial = {getWidth(), getHeight()};
+    private float[] initial2 = {getWidth(), getHeight(), 2};
     private ArrayList<float[]> snakesPos = new ArrayList<>();
 
     private int r = 120;
@@ -51,7 +52,7 @@ public class DrawCircle extends View {
                 sensors.setScreenSize(getWidth(), getHeight());
                 if (PaintBoard.other.size() > snakesPos.size()) {
                     snakesPos.add(initial);
-                    Sensors.otherPos.add(initial);
+                    Sensors.otherPos.add(initial2);
                 }
 
                 try {
