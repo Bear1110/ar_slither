@@ -25,7 +25,7 @@ public class PaintMap extends View {
         paint.setColor(Color.RED);
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(3);
-        canvas.drawCircle((float)center[0], (float)center[1], 3, paint);
+        //canvas.drawCircle((float)center[0], (float)center[1], 3, paint);
         paint.setTextSize(40);
 
         for(int i = 0 ; i < other_point.size() ; i ++){
@@ -33,7 +33,7 @@ public class PaintMap extends View {
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(3);
             float x = (float) other_point.get(i)[0]+(float)center[0];
-            float y = (float) -(other_point.get(i)[1]+(float)center[1]);
+            float y = (float) other_point.get(i)[1]+(float)center[1];
             canvas.drawCircle(x,y, 3, paint);
         }
         invalidate();
