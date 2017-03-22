@@ -6,7 +6,6 @@ public class player {
     public String Lng="0.0";
     public String ip="test";
     public double[] map = {0,0};
-    public double[] dif = { 0, 0 };
 
     public player(int id,String ip){
         this.id = id;

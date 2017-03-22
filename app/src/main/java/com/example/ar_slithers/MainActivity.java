@@ -205,12 +205,12 @@ public class MainActivity extends AppCompatActivity {
                     if (player[i].id == id) {//自己
                         PaintBoard.target[0] = player[i].map[0]; //本人座標
                         PaintBoard.target[1] = player[i].map[1];
-                        PaintMap.other_point.add(player[i].dif);
+                        PaintMap.other_point.add(player[i].map);
                     } else {
 //                        double[] temp = {Double.parseDouble(player[i].Lat), Double.parseDouble(player[i].Lng)};
                         double[] temp = {player[i].map[0], player[i].map[1]};
                         PaintBoard.other.add(temp); //  其他人座標
-                        PaintMap.other_point.add(player[i].dif);
+                        PaintMap.other_point.add(player[i].map);
                     }
                 }
             } else

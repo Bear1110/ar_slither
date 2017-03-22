@@ -110,7 +110,7 @@ public class TcpServer {
                 }
 
                 while (!this.clientSocket.isClosed()) {
-                    double[] pos_temp = { 0, 0 };
+//                    double[] pos_temp = { 0, 0 };
                     try {
                         message = input.readUTF();
                         System.out.println("P" + (thisPlayer.id) + "說:" + message);
@@ -119,22 +119,20 @@ public class TcpServer {
                             thisPlayer.Lat = messageJSON.get("lat").toString();
                             thisPlayer.Lng = messageJSON.get("lng").toString();
                             if (!messageJSON.get("lat").toString().equals("")) {
-
-                                for (int i = 0; i < 4; i++) {
-                                    pos_temp[0] += Double.parseDouble(player[i].Lat); // 求出4點的中心點(小地圖)
-                                    pos_temp[1] += Double.parseDouble(player[i].Lng);
-                                }
-
+//                                for (int i = 0; i < 4; i++) {
+//                                    pos_temp[0] += Double.parseDouble(player[i].Lat); // 求出4點的中心點(小地圖)
+//                                    pos_temp[1] += Double.parseDouble(player[i].Lng);
+//                                }
                                 if (mapCenter[0] == 0) {// 初始化地圖座標中心
                                     mapCenter[0] = Double.parseDouble(thisPlayer.Lat);
                                     mapCenter[1] = Double.parseDouble(thisPlayer.Lng);
                                 }
-                                thisPlayer.map[0] = (Double.parseDouble(thisPlayer.Lat) - mapCenter[0]) * 140000;
-                                thisPlayer.map[1] = (Double.parseDouble(thisPlayer.Lng) - mapCenter[1]) * 140000;
-                                for (int i = 0; i < 4; i++) {
-                                    thisPlayer.dif[0] = (Double.parseDouble(player[i].Lat) - (pos_temp[0] / 4)) * 140000; // 算出這個點跟中心點的差距
-                                    thisPlayer.dif[1] = (Double.parseDouble(player[i].Lng) - (pos_temp[1] / 4)) * 140000;
-                                }
+                                thisPlayer.map[0] = (Double.parseDouble(thisPlayer.Lat) - mapCenter[0]) * 240000;
+                                thisPlayer.map[1] = (Double.parseDouble(thisPlayer.Lng) - mapCenter[1]) * 240000;
+//                                for (int i = 0; i < 4; i++) {
+//                                    thisPlayer.dif[0] = (Double.parseDouble(player[i].Lat) - (pos_temp[0] / 4)) * 140000; // 算出這個點跟中心點的差距
+//                                    thisPlayer.dif[1] = (Double.parseDouble(player[i].Lng) - (pos_temp[1] / 4)) * 140000;
+//                                }
                             }
                             ServerData.put("Data", gson.toJson(player));
                             ServerData.put("mapCenter", gson.toJson(mapCenter));
