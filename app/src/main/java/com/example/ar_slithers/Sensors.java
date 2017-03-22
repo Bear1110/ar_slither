@@ -110,7 +110,6 @@ public class Sensors implements SensorEventListener {
         if (!otherPos.isEmpty()) {
             info.setText(otherPos.get(0)[2] + " " + degree);
         }
-
     }
 
     private void getOtherDegree() {
