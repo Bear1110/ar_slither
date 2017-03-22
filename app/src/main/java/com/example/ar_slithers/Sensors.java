@@ -107,7 +107,10 @@ public class Sensors implements SensorEventListener {
             pos[0] = - (float) Math.sin(radian/2) * 1000 * 2 + width/2;
         }
 
-        info.setText(otherPos.get(0)[2] + " " + degree);
+        if (!otherPos.isEmpty()) {
+            info.setText(otherPos.get(0)[2] + " " + degree);
+        }
+
     }
 
     private void getOtherDegree() {
