@@ -6,6 +6,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
+
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 /**
  * Created by Bear on 2016/12/12.
@@ -37,6 +39,8 @@ public class PaintBoard extends View {
         canvas.drawText("("+target[0]+","+target[1]+")",center[0],center[1]+40,paint);
         canvas.drawText("N",center[0],40,paint);
         //畫其他人的點
+        DecimalFormat df = new DecimalFormat("#.####");
+
         for(int i = 0 ; i < other.size() ; i ++){
             float x = (float) (other.get(i)[0]-target[0]);
             float y = (float) -(other.get(i)[1]-target[1]);
@@ -44,8 +48,8 @@ public class PaintBoard extends View {
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(5);
             canvas.drawCircle(center[0]+x, center[1]+y, 5, paint);
-            canvas.drawText("("+other.get(i)[0]+","+other.get(i)[1]+")",center[0]+x,center[1]+y+30,paint);
-            canvas.drawCircle(center[0]+x, center[1]+y, 5, paint);
+            canvas.drawText("("+df.format(other.get(i)[0])+","+df.format(other.get(i)[1])+")",center[0]+x,center[1]+y+30,paint);
+//            canvas.drawCircle(center[0]+x, center[1]+y, 5, paint);
         }
         invalidate();
     }

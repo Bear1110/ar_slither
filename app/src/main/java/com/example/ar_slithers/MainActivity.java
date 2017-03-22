@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
     private player[] player = new player[4];
     private int id  = 999;
-    private String serverIp = "192.168.0.106"; // 預設是  輸入 伺服器名稱
+    private String serverIp = "140.115.204.124"; // 預設是  輸入 伺服器名稱
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -205,11 +205,12 @@ public class MainActivity extends AppCompatActivity {
                     if (player[i].id == id) {//自己
                         PaintBoard.target[0] = player[i].map[0]; //本人座標
                         PaintBoard.target[1] = player[i].map[1];
+                        PaintMap.other_point.add(player[i].dif);
                     } else {
 //                        double[] temp = {Double.parseDouble(player[i].Lat), Double.parseDouble(player[i].Lng)};
                         double[] temp = {player[i].map[0], player[i].map[1]};
                         PaintBoard.other.add(temp); //  其他人座標
-                        PaintMap.other_point.add(temp);
+                        PaintMap.other_point.add(player[i].dif);
                     }
                 }
             } else

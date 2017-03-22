@@ -6,6 +6,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
+
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class PaintMap extends View {
@@ -22,7 +24,7 @@ public class PaintMap extends View {
 
         Paint paint = new Paint();
 
-        paint.setColor(Color.RED);
+        paint.setColor(Color.BLUE);
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(3);
         //canvas.drawCircle((float)center[0], (float)center[1], 3, paint);
@@ -32,9 +34,9 @@ public class PaintMap extends View {
             paint.setColor(Color.RED);
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(3);
-            float x = (float) other_point.get(i)[0]+(float)center[0];
-            float y = (float) other_point.get(i)[1]+(float)center[1];
-            canvas.drawCircle(x,y, 3, paint);
+            canvas.drawCircle((float)(other_point.get(i)[0]/2+center[0]),(float)(other_point.get(i)[1]/2+center[1]), 3, paint);
+            paint.setTextSize(30);
+            canvas.drawText("P"+(i+1),(float)(other_point.get(i)[0]/2+center[0]),(float)(other_point.get(i)[1]/2+center[1]),paint);
         }
         invalidate();
 
