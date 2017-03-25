@@ -60,7 +60,7 @@ public class DrawCircle extends View {
 
                         for (int j=0; j<snakesPos.size(); j++) {
                             float newX = Sensors.otherPos.get(j)[0];
-                            float newY = Sensors.otherPos.get(j)[0];
+                            float newY = Sensors.otherPos.get(j)[1];
                             snakesPos.get(j)[0] += (newX-snakesPos.get(j)[0])*(i+1)/5;
                             snakesPos.get(j)[1] += (newY-snakesPos.get(j)[1])*(i+1)/5;
                         }
