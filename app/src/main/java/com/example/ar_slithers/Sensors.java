@@ -15,8 +15,6 @@ import java.util.ArrayList;
 @SuppressLint("NewApi")
 public class Sensors implements SensorEventListener {
 
-    // otherPos: x, y, degree => maybe transform to object, not arraylist
-    public static ArrayList<float[]> otherPos = new ArrayList<>();
     private float width, height;
     private float degree, preDegree = 0;
 
@@ -62,9 +60,9 @@ public class Sensors implements SensorEventListener {
             float yFormer = Float.valueOf(df.format(event.values[2]));
             float yLatter = event.values[2] - yFormer;
 
-            for (float[] pos: otherPos) {
-                pos[0] = xFormer*140 + xLatter/10 + width/2;
-                pos[1] = (-yFormer)*140 - yLatter/10 + height;
+            for (SnakeInfo snake: DrawCircle.otherSnakes) {
+                snake.sensorX = xFormer*140 + xLatter/10 + width/2;
+                snake.sensorY = (-yFormer)*140 - yLatter/10 + height;
             }
 
             accelerometerValues = event.values;
@@ -101,25 +99,29 @@ public class Sensors implements SensorEventListener {
         if (Math.abs(preDegree-degree) < 2) degree = preDegree;
         else preDegree = degree;
 
-        for (float[] pos: otherPos) {
-            float angle = pos[2] - degree;
+        for (SnakeInfo snake: DrawCircle.otherSnakes) {
+            float angle = snake.degree - degree;
             double radian = Math.toRadians(angle);
-            pos[0] = - (float) Math.sin(radian/2) * 1000 * 2 + width/2;
+            snake.sensorX = - (float) Math.sin(radian/2) * 1000 * 2 + width/2;
         }
 
-        if (!otherPos.isEmpty()) {
-            info.setText(otherPos.get(0)[2] + " " + degree);
+        if (!DrawCircle.otherSnakes.isEmpty()) {
+            info.setText(DrawCircle.otherSnakes.get(0).degree + " " + degree);
         }
     }
 
     private void getOtherDegree() {
-        for (int i=0; i<otherPos.size(); i++) {
+        double xDistance = 3, yDistance = 4;
+        for (int i=0; i<DrawCircle.otherSnakes.size(); i++) {
 
-            double xDistance = PaintBoard.other.get(i)[0] - PaintBoard.target[0];
-            double yDistance = PaintBoard.other.get(i)[1] - PaintBoard.target[1];
+            if (!PaintBoard.other.isEmpty()) {
+                xDistance = PaintBoard.other.get(i)[0] - PaintBoard.target[0];
+                yDistance = PaintBoard.other.get(i)[1] - PaintBoard.target[1];
+            }
 
-            otherPos.get(i)[2] = (float) Math.toDegrees( Math.atan(yDistance/xDistance) );
-            if (xDistance < 0) otherPos.get(i)[2] += 180;
+            float otherDregree = (float) Math.toDegrees( Math.atan(yDistance/xDistance) );
+            if (xDistance < 0) otherDregree += 180;
+            DrawCircle.otherSnakes.get(i).degree = otherDregree;
         }
     }
 

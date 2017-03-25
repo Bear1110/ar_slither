@@ -13,9 +13,7 @@ import java.util.ArrayList;
 
 public class DrawCircle extends View {
 
-    private float[] initial = {getWidth(), getHeight()};
-    private float[] initial2 = {getWidth(), getHeight(), 2};
-    private ArrayList<float[]> snakesPos = new ArrayList<>();
+    public static ArrayList<SnakeInfo> otherSnakes = new ArrayList<>();
 
     private int r = 120;
     private Sensors sensors;
@@ -28,6 +26,7 @@ public class DrawCircle extends View {
         mPaint.setColor(Color.RED);
         mPaint.setTextSize(30);
         sensors = new Sensors(info, sensor);
+        otherSnakes.add(new SnakeInfo());
         thread = new Thread(SlowDown);
         thread.start();
     }
@@ -35,11 +34,14 @@ public class DrawCircle extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        //canvas.drawText(x+" "+y+" "+getHeight(), 200, 800, mPaint);
-        for (float[] pos: snakesPos) {
-            canvas.drawCircle(pos[0], pos[1], r, mPaint);
-            canvas.drawCircle(pos[0]-75, pos[1], r, mPaint);
-            canvas.drawCircle(pos[0]+75, pos[1], r, mPaint);
+        mPaint.setColor(Color.YELLOW);
+        mPaint.setTextSize(30);
+        canvas.drawText(otherSnakes.get(0).x+" "+otherSnakes.get(0).sensorX, 200, 800, mPaint);
+        mPaint.setColor(Color.RED);
+        for (SnakeInfo snake: otherSnakes) {
+            canvas.drawCircle(snake.x, snake.y, r, mPaint);
+            canvas.drawCircle(snake.x-75, snake.y, r, mPaint);
+            canvas.drawCircle(snake.x+75, snake.y, r, mPaint);
         }
 
         invalidate();
@@ -50,19 +52,15 @@ public class DrawCircle extends View {
         public void run() {
             while (true) {
                 sensors.setScreenSize(getWidth(), getHeight());
-                if (PaintBoard.other.size() > snakesPos.size()) {
-                    snakesPos.add(initial);
-                    Sensors.otherPos.add(initial2);
+                if (PaintBoard.other.size() > otherSnakes.size()) {
+                    otherSnakes.add(new SnakeInfo());
                 }
 
                 try {
                     for (int i=0; i<5; i++) {
-
-                        for (int j=0; j<snakesPos.size(); j++) {
-                            float newX = Sensors.otherPos.get(j)[0];
-                            float newY = Sensors.otherPos.get(j)[1];
-                            snakesPos.get(j)[0] += (newX-snakesPos.get(j)[0])*(i+1)/5;
-                            snakesPos.get(j)[1] += (newY-snakesPos.get(j)[1])*(i+1)/5;
+                        for (SnakeInfo snake: otherSnakes) {
+                            snake.x += (snake.sensorX-snake.x)*(i+1)/5;
+                            snake.y += (snake.sensorY-snake.y)*(i+1)/5;
                         }
                         Thread.sleep(20);
                     }
