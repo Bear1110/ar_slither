@@ -73,7 +73,7 @@ public class Sensors implements SensorEventListener {
             accelerometerValues[2] = temp;
         }
 
-        if(event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD){ // m sensor
+        if(event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD){
 
             //存入矩陣
             magneticFieldValues = event.values;
@@ -96,8 +96,8 @@ public class Sensors implements SensorEventListener {
         degree = (float) Math.toDegrees(values[0]);
         degree -= 90;
         if (degree < -180) degree += 360;
-        if (Math.abs(preDegree-degree) < 2) degree = preDegree;
-        else preDegree = degree;
+        if (Math.abs(preDegree-degree) < 2) { degree = preDegree; }
+        else { preDegree = degree; }
 
         for (SnakeInfo snake: DrawCircle.otherSnakes) {
             float angle = snake.degree - degree;
