@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
     private player[] player = new player[4];
     private int id  = 999;
-    private String serverIp = "140.115.204.124"; // 預設是  輸入 伺服器名稱
+    private String serverIp = "192.168.0.108"; // 預設是  輸入 伺服器名稱
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -186,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void submit_click() {
+    public void submit_click() { //目前無用
     }
     private void updateData(String ServerData) {
         Gson gson = new Gson();
@@ -207,7 +207,6 @@ public class MainActivity extends AppCompatActivity {
                         PaintBoard.target[1] = player[i].map[1];
                         PaintMap.other_point.add(player[i].map);
                     } else {
-//                        double[] temp = {Double.parseDouble(player[i].Lat), Double.parseDouble(player[i].Lng)};
                         double[] temp = {player[i].map[0], player[i].map[1]};
                         PaintBoard.other.add(temp); //  其他人座標
                         PaintMap.other_point.add(player[i].map);
@@ -219,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private Runnable Connection = new Runnable()/*傳送值用的*/ {
-        int serverPort = 12345;
+        final int serverPort = 12345;
         String ServerData = "";
 
         public void run() {
@@ -246,8 +245,6 @@ public class MainActivity extends AppCompatActivity {
                         try {
                             ClientData.put("lat", mLat_input.getText());
                             ClientData.put("lng", mLng_input.getText());
-//                            ClientData.put("lat", "121.187504");
-//                            ClientData.put("lng", "24.966835");
                         } catch (Exception e) {e.printStackTrace();}
                         // 傳東西給server
                         output.writeUTF(ClientData.toString());
