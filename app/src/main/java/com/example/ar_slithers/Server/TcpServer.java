@@ -5,6 +5,7 @@ import java.net.*;
 import java.util.Stack;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.Random;
 import org.json.*;
 /**
  * Created by Bear on 2016/12/12.
@@ -162,8 +163,8 @@ public class TcpServer {
                     thisPlayer.remoteSelfCenter[1] = Double.parseDouble(thisPlayer.Lng);
                 }
                 //算此人位置
-                thisPlayer.map[0] = (Double.parseDouble(thisPlayer.Lat) - thisPlayer.remoteSelfCenter[0]) * 240000;
-                thisPlayer.map[1] = (Double.parseDouble(thisPlayer.Lng) - thisPlayer.remoteSelfCenter[1]) * 240000;
+                thisPlayer.map[0] = (Double.parseDouble(thisPlayer.Lat) - thisPlayer.remoteSelfCenter[0]) * 240000 + thisPlayer.remoteFakeCenter[0];
+                thisPlayer.map[1] = (Double.parseDouble(thisPlayer.Lng) - thisPlayer.remoteSelfCenter[1]) * 240000 + thisPlayer.remoteFakeCenter[1];
             }
         }
 
@@ -180,12 +181,15 @@ public class TcpServer {
         public String Lat="0.0";
         public String Lng="0.0";
         public String ip="test";
-        public double[] remoteSelfCenter={0.0,0.0};
-        public double[] map = {0,0};
 
+        public double[] remoteSelfCenter={0.0,0.0};
+        final public double[] remoteFakeCenter;
+        public double[] map = {0,0};
         public player(int id,String ip){
+            Random ran = new Random();
             this.id = id;
             this.ip = ip;
+            remoteFakeCenter = new double[]{ran.nextInt(100)-50,ran.nextInt(100)-50};
         }
     }
 }
