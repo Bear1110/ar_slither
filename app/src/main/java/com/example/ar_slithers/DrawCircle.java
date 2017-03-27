@@ -14,8 +14,9 @@ import java.util.ArrayList;
 public class DrawCircle extends View {
 
     public static ArrayList<SnakeInfo> otherSnakes = new ArrayList<>();
+    private static int[] color = {Color.RED, Color.YELLOW, Color.GREEN, Color.BLUE};
 
-    private int r = 120;
+    private int r = 120, colorNo = 0;
     private Sensors sensors;
     private Thread thread;
 
@@ -23,10 +24,10 @@ public class DrawCircle extends View {
 
     public DrawCircle(Context context, TextView info, SensorManager sensor) {
         super(context);
-        mPaint.setColor(Color.RED);
         mPaint.setTextSize(30);
         sensors = new Sensors(info, sensor);
-        otherSnakes.add(new SnakeInfo());
+        otherSnakes.add(new SnakeInfo(colorNo));
+        colorNo++;
         thread = new Thread(SlowDown);
         thread.start();
     }
@@ -35,10 +36,10 @@ public class DrawCircle extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         mPaint.setColor(Color.YELLOW);
-        mPaint.setTextSize(30);
         canvas.drawText(otherSnakes.get(0).x+" "+otherSnakes.get(0).sensorX, 200, 800, mPaint);
-        mPaint.setColor(Color.RED);
+
         for (SnakeInfo snake: otherSnakes) {
+            mPaint.setColor(color[snake.colorNo]);
             canvas.drawCircle(snake.x, snake.y, r, mPaint);
             canvas.drawCircle(snake.x-75, snake.y, r, mPaint);
             canvas.drawCircle(snake.x+75, snake.y, r, mPaint);
@@ -53,7 +54,9 @@ public class DrawCircle extends View {
             while (true) {
                 sensors.setScreenSize(getWidth(), getHeight());
                 if (PaintBoard.other.size() > otherSnakes.size()) {
-                    otherSnakes.add(new SnakeInfo());
+                    otherSnakes.add(new SnakeInfo(colorNo));
+                    colorNo++;
+                    if (colorNo > 3) colorNo = 0;
                 }
 
                 try {
@@ -62,7 +65,7 @@ public class DrawCircle extends View {
                             snake.x += (snake.sensorX-snake.x)*(i+1)/5;
                             snake.y += (snake.sensorY-snake.y)*(i+1)/5;
                         }
-                        Thread.sleep(20);
+                        Thread.sleep(100);
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();

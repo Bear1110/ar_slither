@@ -1,8 +1,6 @@
 package com.example.ar_slithers;
 
 import android.annotation.SuppressLint;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -10,15 +8,12 @@ import android.hardware.SensorManager;
 import android.icu.text.DecimalFormat;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 @SuppressLint("NewApi")
 public class Sensors implements SensorEventListener {
 
     private float width, height;
     private float degree, preDegree = 0;
 
-    private Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private SensorManager sensorManager;
     private Sensor gsensor, msensor;
     private TextView info;
@@ -27,15 +22,14 @@ public class Sensors implements SensorEventListener {
     private float[] magneticFieldValues = new float[3];
 
     public Sensors(TextView info, SensorManager sensor) {
-        mPaint.setColor(Color.RED);
         //抓 g sensor 的資料
         sensorManager = sensor;
         gsensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        sensorManager.registerListener(this, gsensor, 100);
+        sensorManager.registerListener(this, gsensor, SensorManager.SENSOR_DELAY_NORMAL);
 
         //抓 magnet sensor 的資料
         msensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        sensorManager.registerListener(this, msensor, 100);
+        sensorManager.registerListener(this, msensor, SensorManager.SENSOR_DELAY_NORMAL);
 
         this.info = info;
     }
@@ -65,9 +59,8 @@ public class Sensors implements SensorEventListener {
                 snake.sensorY = (-yFormer)*140 - yLatter/10 + height;
             }
 
-            accelerometerValues = event.values;
-
             // swap y and z
+            accelerometerValues = event.values;
             float temp = accelerometerValues[1];
             accelerometerValues[1] = accelerometerValues[2];
             accelerometerValues[2] = temp;
@@ -95,7 +88,7 @@ public class Sensors implements SensorEventListener {
 
         degree = (float) Math.toDegrees(values[0]);
         degree -= 90;
-        if (degree < -180) degree += 360;
+        if (degree < -180) { degree += 360; }
         if (Math.abs(preDegree-degree) < 2) { degree = preDegree; }
         else { preDegree = degree; }
 
@@ -119,9 +112,9 @@ public class Sensors implements SensorEventListener {
                 yDistance = PaintBoard.other.get(i)[1] - PaintBoard.target[1];
             }
 
-            float otherDregree = (float) Math.toDegrees( Math.atan(yDistance/xDistance) );
-            if (xDistance < 0) otherDregree += 180;
-            DrawCircle.otherSnakes.get(i).degree = otherDregree;
+            float otherDegree = (float) Math.toDegrees( Math.atan(yDistance/xDistance) );
+            if (xDistance < 0) otherDegree += 180;
+            DrawCircle.otherSnakes.get(i).degree = otherDegree;
         }
     }
 

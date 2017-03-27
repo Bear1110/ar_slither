@@ -15,6 +15,7 @@
     <string name="sensor1">陀螺儀：</string>
     <string name="sensor2">G Sensor：</string>
     <string name="sensor3">磁力感測：</string>
+    <string name="sensor4">方向感測：</string>
 
     <string name="gps1">Latitude:</string>
     <string name="gps2">Longitude:</string>

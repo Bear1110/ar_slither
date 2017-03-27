@@ -16,7 +16,7 @@ import com.example.e6_slithers.R;
 
 public class SensorActivity extends AppCompatActivity implements SensorEventListener {
 
-    private TextView gyroinformation, gsensorinformation, direction;
+    private TextView gyroinformation, gsensorinformation, magneticinformation, orientationinformation;
     private SensorManager sensorManager;
     private Sensor gyrosensor, gsensor, msensor;
 
@@ -30,7 +30,8 @@ public class SensorActivity extends AppCompatActivity implements SensorEventList
 
         gyroinformation = (TextView)findViewById(R.id.gyroinfo);
         gsensorinformation = (TextView)findViewById(R.id.gsensorinfo);
-        direction = (TextView)findViewById(R.id.direction);
+        magneticinformation = (TextView)findViewById(R.id.magninfo);
+        orientationinformation = (TextView)findViewById(R.id.orientation);
 
         sensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
 
@@ -40,11 +41,11 @@ public class SensorActivity extends AppCompatActivity implements SensorEventList
 
         //抓 g sensor 的資料
         gsensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        sensorManager.registerListener(this, gsensor, SensorManager.SENSOR_DELAY_UI);
+        sensorManager.registerListener(this, gsensor, SensorManager.SENSOR_DELAY_NORMAL);
 
         //抓 magnet sensor 的資料
         msensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        sensorManager.registerListener(this, msensor, SensorManager.SENSOR_DELAY_UI);
+        sensorManager.registerListener(this, msensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -68,7 +69,7 @@ public class SensorActivity extends AppCompatActivity implements SensorEventList
             x = df.format(event.values[0]);
             y = df.format(event.values[1]);
             z = df.format(event.values[2]);
-            gShowInfo("事件：" + "\nx:" + x + "\ny:" + y  + "\nz:" + z);
+            gShowInfo("x:" + x + "\ny:" + y  + "\nz:" + z);
 
             //存入矩陣
             accelerometerValues = event.values;
@@ -81,7 +82,7 @@ public class SensorActivity extends AppCompatActivity implements SensorEventList
             x = df.format(event.values[0]);
             y = df.format(event.values[1]);
             z = df.format(event.values[2]);
-            gyroShowInfo("事件：" + "\nx:" + x + "\ny:" + y  + "\nz:" + z);
+            mShowInfo("x:" + x + "\ny:" + y  + "\nz:" + z);
 
             //存入矩陣
             magneticFieldValues = event.values;
@@ -100,10 +101,10 @@ public class SensorActivity extends AppCompatActivity implements SensorEventList
         SensorManager.getRotationMatrix(R, null, accelerometerValues, magneticFieldValues);
         SensorManager.getOrientation(R, values);
 
-        float degree=(float)Math.toDegrees(values[0]);
-        //BigDecimal value= new BigDecimal(values[0]);
-        //x = (float) Math.sin(value.doubleValue()) * 150 + 400;
-        directionShowInfo(String.valueOf(degree));
+        float[] degree = {(float)Math.toDegrees(values[0]),
+                (float)Math.toDegrees(values[1]), (float)Math.toDegrees(values[2])};
+
+        orienShowInfo("azimuth方位角:" + degree[0] + "\npitch傾斜角:" + degree[1]  + "\nroll旋轉角:" + degree[2]);
 
     }
 
@@ -120,7 +121,11 @@ public class SensorActivity extends AppCompatActivity implements SensorEventList
         gsensorinformation.setText(info);
     }
 
-    private void directionShowInfo(String info){
-        direction.setText(info);
+    private void mShowInfo(String info){
+        magneticinformation.setText(info);
+    }
+
+    private void orienShowInfo(String info){
+        orientationinformation.setText(info);
     }
 }
