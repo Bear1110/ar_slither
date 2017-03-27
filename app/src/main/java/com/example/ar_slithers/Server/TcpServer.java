@@ -5,7 +5,6 @@ import java.net.*;
 import java.util.Stack;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import com.example.ar_slithers.player;
 import org.json.*;
 /**
  * Created by Bear on 2016/12/12.
@@ -25,29 +24,21 @@ public class TcpServer {
 //        player[0] = new player(1, "");
 //        player[0].Lat = "121.187504"; // meeting
 //        player[0].Lng = "24.966835";
-//        player[0].dif[0] = (121.187504 - (121.1874645))*140000; // meeting
-//        player[0].dif[1] = (24.966835 - (24.966917))*140000;
 //        player[1] = new player(2, "");
 //        player[1].Lat = "121.187637"; // 水滴
 //        player[1].Lng = "24.967377";
 //        player[1].map[0] = (121.187637 - 121.187504) * 140000; // 水滴
 //        player[1].map[1] = (24.967377 - 24.966835) * 140000;
-//        player[1].dif[0] = (121.187637 - (121.1874645)) * 140000; // 水滴
-//        player[1].dif[1] = (24.967377 - (24.966917)) * 140000;
 //        player[2] = new player(3, "");
 //        player[2].Lat = "121.187596"; // 水滴
 //        player[2].Lng = "24.966342";
 //        player[2].map[0] = (121.187596 - 121.187504) * 140000; // 停車場
 //        player[2].map[1] = (24.966342 - 24.966835) * 140000;
-//        player[2].dif[0] = (121.187596 - (121.1874645)) * 140000; // 停車場
-//        player[2].dif[1] = (24.966342 - (24.966917)) * 140000;
 //        player[3] = new player(4, "");
 //        player[3].Lat = "121.187121"; // 貨梯
 //        player[3].Lng = "24.967114";
 //        player[3].map[0] = (121.187121 - 121.187504) * 140000; // 停車場
 //        player[3].map[1] = (24.967114 - 24.966835) * 140000;
-//        player[3].dif[0] = (121.187121 - (121.1874645)) * 140000; // 停車場
-//        player[3].dif[1] = (24.967114 - (24.966917)) * 140000;
 
         ServerSocket serverSocket = null;
         ExecutorService threadExecutor = Executors.newFixedThreadPool(20);
@@ -110,7 +101,6 @@ public class TcpServer {
                 }
 
                 while (!this.clientSocket.isClosed()) {
-//                    double[] pos_temp = { 0, 0 };
                     try {
                         message = input.readUTF();
                         System.out.println("P" + (thisPlayer.id) + "說:" + message);
@@ -119,20 +109,10 @@ public class TcpServer {
                             thisPlayer.Lat = messageJSON.get("lat").toString();
                             thisPlayer.Lng = messageJSON.get("lng").toString();
                             if (!messageJSON.get("lat").toString().equals("")) {
-//                                for (int i = 0; i < 4; i++) {
-//                                    pos_temp[0] += Double.parseDouble(player[i].Lat); // 求出4點的中心點(小地圖)
-//                                    pos_temp[1] += Double.parseDouble(player[i].Lng);
-//                                }
                                 if (mapCenter[0] == 0) {// 初始化地圖座標中心
-                                    mapCenter[0] = Double.parseDouble(thisPlayer.Lat);
-                                    mapCenter[1] = Double.parseDouble(thisPlayer.Lng);
+                                    setCenterMap(thisPlayer.Lat,thisPlayer.Lng);
                                 }
-                                thisPlayer.map[0] = (Double.parseDouble(thisPlayer.Lat) - mapCenter[0]) * 240000;
-                                thisPlayer.map[1] = (Double.parseDouble(thisPlayer.Lng) - mapCenter[1]) * 240000;
-//                                for (int i = 0; i < 4; i++) {
-//                                    thisPlayer.dif[0] = (Double.parseDouble(player[i].Lat) - (pos_temp[0] / 4)) * 140000; // 算出這個點跟中心點的差距
-//                                    thisPlayer.dif[1] = (Double.parseDouble(player[i].Lng) - (pos_temp[1] / 4)) * 140000;
-//                                }
+                                setThisPlayerMap();
                             }
                             ServerData.put("Data", gson.toJson(player));
                             ServerData.put("mapCenter", gson.toJson(mapCenter));
@@ -169,6 +149,43 @@ public class TcpServer {
                 }
                 System.out.println("已經滿人了!!!"+clientSocket.getRemoteSocketAddress()+"離開連線");
             }
+        }
+
+        private void setThisPlayerMap() {
+            // TODO Auto-generated method stub
+            thisPlayer.map[0] = (Double.parseDouble(thisPlayer.Lat) - mapCenter[0]) * 240000;
+            thisPlayer.map[1] = (Double.parseDouble(thisPlayer.Lng) - mapCenter[1]) * 240000;
+
+            if( thisPlayer.map[0] > 1000 || thisPlayer.map[1] > 1000 ){//此人離中心已經太遠
+                if(thisPlayer.remoteSelfCenter[0]==0.0){//這是第一次給他中心座標
+                    thisPlayer.remoteSelfCenter[0] = Double.parseDouble(thisPlayer.Lat);
+                    thisPlayer.remoteSelfCenter[1] = Double.parseDouble(thisPlayer.Lng);
+                }
+                //算此人位置
+                thisPlayer.map[0] = (Double.parseDouble(thisPlayer.Lat) - thisPlayer.remoteSelfCenter[0]) * 240000;
+                thisPlayer.map[1] = (Double.parseDouble(thisPlayer.Lng) - thisPlayer.remoteSelfCenter[1]) * 240000;
+            }
+        }
+
+        private void setCenterMap(String lat,String  lng){
+            mapCenter[0] = Double.parseDouble(lat);
+            mapCenter[1] = Double.parseDouble(lng);
+
+        }
+
+    }
+
+    public class player {
+        public int id;
+        public String Lat="0.0";
+        public String Lng="0.0";
+        public String ip="test";
+        public double[] remoteSelfCenter={0.0,0.0};
+        public double[] map = {0,0};
+
+        public player(int id,String ip){
+            this.id = id;
+            this.ip = ip;
         }
     }
 }

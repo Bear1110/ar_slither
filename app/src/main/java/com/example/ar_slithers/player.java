@@ -5,6 +5,7 @@ public class player {
     public String Lat="0.0";
     public String Lng="0.0";
     public String ip="test";
+    public double[] remoteSelfCenter={0.0,0.0};
     public double[] map = {0,0};
 
     public player(int id,String ip){
