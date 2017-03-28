@@ -115,6 +115,7 @@ public class Sensors implements SensorEventListener {
             float otherDegree = (float) Math.toDegrees( Math.atan(yDistance/xDistance) );
             if (xDistance < 0) otherDegree += 180;
             DrawCircle.otherSnakes.get(i).degree = otherDegree;
+            DrawCircle.otherSnakes.get(i).setDistance(xDistance, yDistance);
         }
     }
 

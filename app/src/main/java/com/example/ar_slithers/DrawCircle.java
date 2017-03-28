@@ -1,6 +1,5 @@
 package com.example.ar_slithers;
 
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -16,7 +15,10 @@ public class DrawCircle extends View {
     public static ArrayList<SnakeInfo> otherSnakes = new ArrayList<>();
     private static int[] color = {Color.RED, Color.YELLOW, Color.GREEN, Color.BLUE};
 
-    private int r = 120, colorNo = 0;
+    private static final int RATE = 1000;
+    private static final int DELAY = 5000/RATE;
+
+    private int colorNo = 0;
     private Sensors sensors;
     private Thread thread;
 
@@ -24,7 +26,7 @@ public class DrawCircle extends View {
 
     public DrawCircle(Context context, TextView info, SensorManager sensor) {
         super(context);
-        mPaint.setTextSize(30);
+        mPaint.setTextSize(40);
         sensors = new Sensors(info, sensor);
         otherSnakes.add(new SnakeInfo(colorNo));
         colorNo++;
@@ -36,13 +38,15 @@ public class DrawCircle extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         mPaint.setColor(Color.YELLOW);
-        canvas.drawText(otherSnakes.get(0).x+" "+otherSnakes.get(0).sensorX, 200, 800, mPaint);
+        canvas.drawText(otherSnakes.get(0).X+"", 100, getHeight()-50, mPaint);
+        canvas.drawText(otherSnakes.get(0).sensorX+"", 400, getHeight()-50, mPaint);
 
         for (SnakeInfo snake: otherSnakes) {
             mPaint.setColor(color[snake.colorNo]);
-            canvas.drawCircle(snake.x, snake.y, r, mPaint);
-            canvas.drawCircle(snake.x-75, snake.y, r, mPaint);
-            canvas.drawCircle(snake.x+75, snake.y, r, mPaint);
+            canvas.drawCircle(snake.X, snake.Y, snake.getRadius(), mPaint);
+            canvas.drawCircle(snake.X-75, snake.Y, snake.getRadius(), mPaint);
+            canvas.drawCircle(snake.X+75, snake.Y, snake.getRadius(), mPaint);
+            canvas.drawText(snake.getDistance()+"", snake.X-75, snake.Y-snake.getRadius(), mPaint);
         }
 
         invalidate();
@@ -60,12 +64,12 @@ public class DrawCircle extends View {
                 }
 
                 try {
-                    for (int i=0; i<5; i++) {
+                    for (int i=0; i<RATE; i++) {
                         for (SnakeInfo snake: otherSnakes) {
-                            snake.x += (snake.sensorX-snake.x)*(i+1)/5;
-                            snake.y += (snake.sensorY-snake.y)*(i+1)/5;
+                            snake.X += (snake.sensorX-snake.X)*(i+1)/RATE;
+                            snake.Y += (snake.sensorY-snake.Y)*(i+1)/RATE;
                         }
-                        Thread.sleep(100);
+                        Thread.sleep(DELAY);
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -73,4 +77,5 @@ public class DrawCircle extends View {
             }
         }
     };
+
 }
