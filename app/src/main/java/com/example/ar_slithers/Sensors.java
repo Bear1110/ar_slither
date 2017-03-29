@@ -8,8 +8,12 @@ import android.hardware.SensorManager;
 import android.icu.text.DecimalFormat;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 @SuppressLint("NewApi")
 public class Sensors implements SensorEventListener {
+
+    protected static ArrayList<Float> degreeSet = new ArrayList<>();
 
     private float width, height;
     private float degree, preDegree = 0;
@@ -25,11 +29,11 @@ public class Sensors implements SensorEventListener {
         //抓 g sensor 的資料
         sensorManager = sensor;
         gsensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        sensorManager.registerListener(this, gsensor, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, gsensor, SensorManager.SENSOR_DELAY_FASTEST);
 
         //抓 magnet sensor 的資料
         msensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        sensorManager.registerListener(this, msensor, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, msensor, SensorManager.SENSOR_DELAY_FASTEST);
 
         this.info = info;
     }
@@ -55,7 +59,7 @@ public class Sensors implements SensorEventListener {
             float yLatter = event.values[2] - yFormer;
 
             for (SnakeInfo snake: DrawCircle.otherSnakes) {
-                snake.sensorX = xFormer*140 + xLatter/10 + width/2;
+                //snake.sensorX = xFormer*140 + xLatter/10 + width/2;
                 snake.sensorY = (-yFormer)*140 - yLatter/10 + height;
             }
 
@@ -92,11 +96,9 @@ public class Sensors implements SensorEventListener {
         if (Math.abs(preDegree-degree) < 2) { degree = preDegree; }
         else { preDegree = degree; }
 
-        for (SnakeInfo snake: DrawCircle.otherSnakes) {
-            float angle = snake.degree - degree;
-            double radian = Math.toRadians(angle);
-            snake.sensorX = - (float) Math.sin(radian/2) * 1000 * 2 + width/2;
-        }
+        degreeSet.add(degree);
+
+
 
         if (!DrawCircle.otherSnakes.isEmpty()) {
             info.setText(DrawCircle.otherSnakes.get(0).degree + " " + degree);
