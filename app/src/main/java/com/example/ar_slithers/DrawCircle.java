@@ -16,7 +16,7 @@ public class DrawCircle extends View {
     private static int[] color = {Color.RED, Color.YELLOW, Color.GREEN, Color.BLUE};
 
     private static final int RATE = 100;
-    private static final int DELAY = 300/RATE; // delay longer => move slower
+    private static final int DELAY = 400/RATE; // delay longer => move slower
 
     private int colorNo = 0;
     private Sensors sensors;
@@ -28,13 +28,14 @@ public class DrawCircle extends View {
         super(context);
         mPaint.setTextSize(40);
         sensors = new Sensors(info, sensor);
-        //otherSnakes.add(new SnakeInfo(colorNo));
-        colorNo++;
+        if (otherSnakes.isEmpty()) {
+            otherSnakes.add(new SnakeInfo(colorNo));
+            colorNo++;
+        }
         if (threadSlow == null) {
             threadSlow = new Thread(SlowDown);
             threadSlow.start();
         }
-
     }
 
     @Override

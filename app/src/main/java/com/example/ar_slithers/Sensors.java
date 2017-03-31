@@ -101,10 +101,10 @@ public class Sensors implements SensorEventListener {
         double xDistance = 3, yDistance = 4;
         for (int i=0; i<DrawCircle.otherSnakes.size(); i++) {
 
-            //if (!DrawCircle.otherSnakes.isEmpty()) {
+            if (!PaintBoard.other.isEmpty()) {
                 xDistance = PaintBoard.other.get(i)[0] - PaintBoard.target[0];
                 yDistance = PaintBoard.other.get(i)[1] - PaintBoard.target[1];
-            //}
+            }
 
             float otherDegree = (float) Math.toDegrees( Math.atan(yDistance/xDistance) );
             if (xDistance < 0) otherDegree += 180;
