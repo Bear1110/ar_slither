@@ -28,6 +28,7 @@ public class PaintBoard extends View {
         super.onDraw(canvas);
 
         int[] center = {getWidth()/2,getHeight()/2};
+        DecimalFormat df = new DecimalFormat("#.####");
 
         //畫自己的點
         Paint paint = new Paint();
@@ -36,10 +37,9 @@ public class PaintBoard extends View {
         paint.setStrokeWidth(5);
         canvas.drawCircle(center[0], center[1], 5, paint);
         paint.setTextSize(40);
-        canvas.drawText("("+target[0]+","+target[1]+")",center[0],center[1]+40,paint);
+        canvas.drawText("("+df.format(target[0])+","+df.format(target[1])+")",center[0],center[1]+40,paint);
         canvas.drawText("N",center[0],40,paint);
         //畫其他人的點
-        DecimalFormat df = new DecimalFormat("#.####");
 
         for(int i = 0 ; i < other.size() ; i ++){
             float x = (float) (other.get(i)[0]-target[0]);
