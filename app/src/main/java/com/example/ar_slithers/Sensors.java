@@ -84,8 +84,8 @@ public class Sensors implements SensorEventListener {
         float pitch = (float)(((values[1]*180)/Math.PI));
         float roll = (float)(((values[2]*180)/Math.PI));
 
-        degree = degree + ALPHA * (azimuth - degree);
-        adjustDegree = adjustDegree + ALPHA * (pitch - adjustDegree);
+        degree = degree + 0.25f * (azimuth - degree);
+        adjustDegree = adjustDegree + 0.25f * (pitch - adjustDegree);
 
         for (SnakeInfo snake: DrawCircle.otherSnakes) {
             float angle = snake.degree - degree;
