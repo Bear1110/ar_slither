@@ -161,10 +161,22 @@ public class TcpServer {
             thisPlayer.map[0] = (Double.parseDouble(thisPlayer.Lat) - mapCenter[0]) * 240000;
             thisPlayer.map[1] = (Double.parseDouble(thisPlayer.Lng) - mapCenter[1]) * 240000;
             System.out.println(thisPlayer.map[0]+"   "+thisPlayer.map[1]);
-            if( thisPlayer.map[0] > 200 || thisPlayer.map[1] > 200 ){//此人離中心已經太遠
+            if( Math.abs(thisPlayer.map[0]) > 200 || Math.abs(thisPlayer.map[1]) > 200 ){//此人離中心已經太遠
                 if(thisPlayer.remoteSelfCenter[0]==0.0){//這是第一次給他中心座標
+                    Random ran = new Random();
                     thisPlayer.remoteSelfCenter[0] = Double.parseDouble(thisPlayer.Lat);
                     thisPlayer.remoteSelfCenter[1] = Double.parseDouble(thisPlayer.Lng);
+
+                    if (thisPlayer.map[0] * thisPlayer.map[1] > 0 && thisPlayer.map[0] > 0){ // 第一象限
+                        thisPlayer.remoteFakeCenter = new double[] {ran.nextInt(50), ran.nextInt(50)};
+                    }else if(thisPlayer.map[0] * thisPlayer.map[1] > 0 && thisPlayer.map[0] < 0){ // 第三象限
+                        thisPlayer.remoteFakeCenter = new double[] {-(ran.nextInt(50)), -(ran.nextInt(50))};
+                    }else if(thisPlayer.map[0] * thisPlayer.map[1] < 0 && thisPlayer.map[0] > 0){ // 第二象限
+                        thisPlayer.remoteFakeCenter = new double[] {-(ran.nextInt(50)), ran.nextInt(50)};
+                    }else if(thisPlayer.map[0] * thisPlayer.map[1] < 0 && thisPlayer.map[0] < 0){ // 第四象限
+                            thisPlayer.remoteFakeCenter = new double[] {ran.nextInt(50), -(ran.nextInt(50))};
+                    }
+
                 }
                 //算此人位置
                 thisPlayer.map[0] = (Double.parseDouble(thisPlayer.Lat) - thisPlayer.remoteSelfCenter[0]) * 240000 + thisPlayer.remoteFakeCenter[0];
@@ -186,15 +198,15 @@ public class TcpServer {
         public String ip = "test";
 
         public double[] remoteSelfCenter = {0.0, 0.0};
-        final public double[] remoteFakeCenter;
+        public double[] remoteFakeCenter;
         public double[] map = {0, 0};
 
         public player(int id, String ip) {
-            Random ran = new Random();
+//            Random ran = new Random();
             this.id = id;
             this.ip = ip;
-            remoteFakeCenter =
-                    new double[] {ran.nextInt(100) - 50, ran.nextInt(100) - 50};
+//            remoteFakeCenter =
+//                    new double[] {ran.nextInt(100) - 50, ran.nextInt(100) - 50};
         }
     }
 
