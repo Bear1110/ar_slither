@@ -15,7 +15,7 @@ public class Sensors implements SensorEventListener {
     private static final float ALPHA = 0.25f;
 
     private float width, height;
-    private float degree = 0;
+    private float degree = 0, adjustDegree = 0;
 
     private SensorManager sensorManager;
     private Sensor gsensor, msensor;
@@ -58,7 +58,7 @@ public class Sensors implements SensorEventListener {
             accelerometerValues = lowPass(event.values.clone(), accelerometerValues);
 
             for (SnakeInfo snake: DrawCircle.otherSnakes) {
-                snake.Y = -accelerometerValues[2]*130 + height/2;
+                snake.Y = -accelerometerValues[2]*130 + height*snake.getDensity()/2;
             }
         }
 
@@ -84,12 +84,13 @@ public class Sensors implements SensorEventListener {
         float pitch = (float)(((values[1]*180)/Math.PI));
         float roll = (float)(((values[2]*180)/Math.PI));
 
-        degree = degree + 0.2f * (azimuth - degree);
+        degree = degree + ALPHA * (azimuth - degree);
+        adjustDegree = adjustDegree + ALPHA * (pitch - adjustDegree);
 
         for (SnakeInfo snake: DrawCircle.otherSnakes) {
             float angle = snake.degree - degree;
             double radian = Math.toRadians(angle);
-            snake.sensorX = (float) Math.sin(radian/2) * 1800 * 2 + (-pitch-90)*2.5f + width/2;
+            snake.sensorX = (float) Math.sin(radian/2) * 1500 * 2 + (-adjustDegree)*0.5f + width/2;
         }
 
         if (!DrawCircle.otherSnakes.isEmpty()) {

@@ -17,6 +17,7 @@ public class DrawCircle extends View {
 
     private static final int RATE = 100;
     private static final int DELAY = 400/RATE; // delay longer => move slower
+    private static float density;
 
     private int colorNo = 0;
     private Sensors sensors;
@@ -24,12 +25,13 @@ public class DrawCircle extends View {
 
     private Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
-    public DrawCircle(Context context, TextView info, SensorManager sensor) {
+    public DrawCircle(Context context, float density, TextView info, SensorManager sensor) {
         super(context);
+        this.density = density;
         mPaint.setTextSize(40);
         sensors = new Sensors(info, sensor);
         if (otherSnakes.isEmpty()) {
-            otherSnakes.add(new SnakeInfo(colorNo));
+            otherSnakes.add(new SnakeInfo(colorNo, density));
             colorNo++;
         }
         if (threadSlow == null) {
@@ -51,9 +53,9 @@ public class DrawCircle extends View {
         for (SnakeInfo snake: otherSnakes) {
             mPaint.setColor(color[snake.colorNo]);
             canvas.drawCircle(snake.X, snake.Y, snake.getRadius(), mPaint);
-            canvas.drawCircle(snake.X-75, snake.Y, snake.getRadius(), mPaint);
-            canvas.drawCircle(snake.X+75, snake.Y, snake.getRadius(), mPaint);
-            canvas.drawText(snake.getDistance()+"", snake.X-75, snake.Y-snake.getRadius(), mPaint);
+            canvas.drawCircle(snake.X-snake.getRadius()/2, snake.Y, snake.getRadius(), mPaint);
+            canvas.drawCircle(snake.X+snake.getRadius()/2, snake.Y, snake.getRadius(), mPaint);
+            canvas.drawText(snake.getDistance()+"", snake.X-snake.getRadius()/2, snake.Y-snake.getRadius(), mPaint);
         }
 
         invalidate();
@@ -66,7 +68,7 @@ public class DrawCircle extends View {
                 sensors.setScreenSize(getWidth(), getHeight());
                 // If add new player, otherSnakes must refresh.
                 if (PaintBoard.other.size() > otherSnakes.size()) {
-                    otherSnakes.add(new SnakeInfo(colorNo));
+                    otherSnakes.add(new SnakeInfo(colorNo, density));
                     colorNo++;
                     if (colorNo > 3) colorNo = 0;
                 }

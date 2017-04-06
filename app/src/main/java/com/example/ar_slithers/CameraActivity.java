@@ -22,6 +22,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.FrameLayout;
@@ -52,6 +53,9 @@ public class CameraActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
 
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+
         // Camera Surface View
         cameraManager = (CameraManager) this.getSystemService(Context.CAMERA_SERVICE);
         cameraView = (SurfaceView) findViewById(R.id.cameraView);
@@ -61,8 +65,9 @@ public class CameraActivity extends AppCompatActivity {
         // Draw in Layout
         FrameLayout drawLayout = (FrameLayout) findViewById(R.id.frame);
         TextView info = (TextView)findViewById(R.id.info);
-        drawLayout.addView(new DrawCircle(this, info,
-                (SensorManager)getSystemService(Context.SENSOR_SERVICE)));
+        DrawCircle drawCircle = new DrawCircle(this, displayMetrics.density, info,
+                (SensorManager)getSystemService(Context.SENSOR_SERVICE));
+        drawLayout.addView(drawCircle);
     }
 
     // SurfaceHolder Callback 是監聽 surface 改變的一個接口

@@ -4,10 +4,12 @@ public class SnakeInfo {
     int colorNo;
     float X = 0, Y = 0, sensorX = 0, sensorY = 0, degree;
     private double distance;
-    private float radius = 120;
+    private float radius = 50;
+    private float density;
 
-    SnakeInfo(int colorNo) {
+    SnakeInfo(int colorNo, float density) {
         this.colorNo = colorNo;
+        this.density = density;
     }
 
     public void setDistance(double xDistance, double yDistance) {
@@ -21,6 +23,10 @@ public class SnakeInfo {
     }
 
     public float getRadius() {
-        return radius;
+        return radius * density;
+    }
+
+    public float getDensity() {
+        return density;
     }
 }
