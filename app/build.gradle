@@ -1,5 +1,10 @@
 apply plugin: 'com.android.application'
-
+dependencies {
+    def mobileCenterSdkVersion = '0.6.1'
+    compile "com.microsoft.azure.mobile:mobile-center-analytics:${mobileCenterSdkVersion}"
+    compile "com.microsoft.azure.mobile:mobile-center-crashes:${mobileCenterSdkVersion}"
+    compile "com.microsoft.azure.mobile:mobile-center-distribute:${mobileCenterSdkVersion}"
+}
 android {
     compileSdkVersion 24
     buildToolsVersion "25.0.0"
@@ -30,4 +35,10 @@ dependencies {
     compile 'com.google.code.gson:gson:2.3.1'
     testCompile 'junit:junit:4.12'
     compile 'com.google.android.gms:play-services-appindexing:8.4.0'
+    //mobile center
+//    def mobileCenterSdkVersion = '0.6.1'
+//    compile "com.microsoft.azure.mobile:mobile-center-analytics:${mobileCenterSdkVersion}"
+//    compile "com.microsoft.azure.mobile:mobile-center-crashes:${mobileCenterSdkVersion}"
+//    compile "com.microsoft.azure.mobile:mobile-center-distribute:${mobileCenterSdkVersion}"
 }
+
