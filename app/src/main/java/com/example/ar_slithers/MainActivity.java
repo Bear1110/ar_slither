@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        MobileCenter.start(getApplication(), "fbd6a058-0c4f-4a44-82b8-874b6eac8122",Analytics.class, Crashes.class, Distribute.class);
+        MobileCenter.start(getApplication(), "75774d09-5381-4c9e-9e51-8bca3b6440bb",Analytics.class, Crashes.class, Distribute.class);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         final EditText inputIp = new EditText(this);
