@@ -35,6 +35,11 @@ import java.net.UnknownHostException;
 import java.text.DecimalFormat;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+//mobile center
+import com.microsoft.azure.mobile.MobileCenter;
+import com.microsoft.azure.mobile.analytics.Analytics;
+import com.microsoft.azure.mobile.crashes.Crashes;
+import com.microsoft.azure.mobile.distribute.Distribute;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -53,10 +58,11 @@ public class MainActivity extends AppCompatActivity {
 
     private player[] player = new player[4];
     private int id  = 999;
-    private String serverIp = "192.168.0.108"; // 預設是  輸入 伺服器名稱
+    private String serverIp = "140.115.204.124"; // 預設是  輸入 伺服器名稱
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        MobileCenter.start(getApplication(), "75774d09-5381-4c9e-9e51-8bca3b6440bb",Analytics.class, Crashes.class, Distribute.class);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         final EditText inputIp = new EditText(this);
@@ -90,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 })
                 .show();
+
     }
 
     // id 對應區
