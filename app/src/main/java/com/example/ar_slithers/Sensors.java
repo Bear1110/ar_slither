@@ -7,8 +7,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 @SuppressLint("NewApi")
 public class Sensors implements SensorEventListener {
 
@@ -47,14 +45,7 @@ public class Sensors implements SensorEventListener {
 
         getOtherDegree();
 
-        if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
-        {
-//            float xFormer = Float.valueOf(df.format(event.values[0]));
-//            float xLatter = event.values[0] - xFormer;
-//
-//            float yFormer = Float.valueOf(df.format(event.values[2]));
-//            float yLatter = event.values[2] - yFormer;
-
+        if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             accelerometerValues = lowPass(event.values.clone(), accelerometerValues);
 
             for (SnakeInfo snake: DrawCircle.otherSnakes) {
@@ -63,7 +54,6 @@ public class Sensors implements SensorEventListener {
         }
 
         if(event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD){
-            //存入矩陣
             magneticFieldValues = lowPass(event.values.clone(), magneticFieldValues);
         }
 
@@ -84,13 +74,15 @@ public class Sensors implements SensorEventListener {
         float pitch = (float)(((values[1]*180)/Math.PI));
         float roll = (float)(((values[2]*180)/Math.PI));
 
+        // apply "Low-Pass Filter" method
+        // adjustDegree: azimuth change when phone up-down, so use pitch to adjust
         degree = degree + 0.25f * (azimuth - degree);
         adjustDegree = adjustDegree + 0.25f * (pitch - adjustDegree);
 
         for (SnakeInfo snake: DrawCircle.otherSnakes) {
             float angle = snake.degree - degree;
             double radian = Math.toRadians(angle);
-            snake.sensorX = (float) Math.sin(radian/2) * 1500 * 2 + (-adjustDegree)*0.5f + width/2;
+            snake.sensorX = (float) Math.sin(radian/2) * 1500 * 2 + (-adjustDegree)*2.5f + width/2;
         }
 
         if (!DrawCircle.otherSnakes.isEmpty()) {
@@ -98,6 +90,7 @@ public class Sensors implements SensorEventListener {
         }
     }
 
+    // get other players' degree comparison with user, and calculate the distance
     private void getOtherDegree() {
         double xDistance = 3, yDistance = 4;
         for (int i=0; i<DrawCircle.otherSnakes.size(); i++) {
@@ -114,6 +107,7 @@ public class Sensors implements SensorEventListener {
         }
     }
 
+    //讓感測器取得的資料以緩慢速度趨向 apply "Low-Pass Filter" method
     protected float[] lowPass(float[] input, float[] output) {
         if (output == null) return input;
 

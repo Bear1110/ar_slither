@@ -47,6 +47,14 @@ public class CameraActivity extends AppCompatActivity {
     private ImageReader imageReader;
     private Builder previewBuilder;
     private final static int CAMERA_REQUEST_CODE = 2222;
+    private DrawCircle drawCircle;
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        drawCircle.stop();
+        drawCircle = null;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +73,7 @@ public class CameraActivity extends AppCompatActivity {
         // Draw in Layout
         FrameLayout drawLayout = (FrameLayout) findViewById(R.id.frame);
         TextView info = (TextView)findViewById(R.id.info);
-        DrawCircle drawCircle = new DrawCircle(this, displayMetrics.density, info,
+        drawCircle = new DrawCircle(this, displayMetrics.density, info,
                 (SensorManager)getSystemService(Context.SENSOR_SERVICE));
         drawLayout.addView(drawCircle);
     }

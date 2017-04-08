@@ -37,8 +37,8 @@ public class SensorActivity extends AppCompatActivity implements SensorEventList
         sensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
 
         //抓陀螺儀的資料
-        gyrosensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-        sensorManager.registerListener(this, gyrosensor, SensorManager.SENSOR_DELAY_GAME);
+//        gyrosensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+//        sensorManager.registerListener(this, gyrosensor, SensorManager.SENSOR_DELAY_GAME);
 
         //抓 g sensor 的資料
         gsensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -62,12 +62,18 @@ public class SensorActivity extends AppCompatActivity implements SensorEventList
 		}*/
 
         if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){ // g sensor
+//            float xFormer = Float.valueOf(df.format(event.values[0]));
+//            float xLatter = event.values[0] - xFormer;
+//            float yFormer = Float.valueOf(df.format(event.values[2]));
+//            float yLatter = event.values[2] - yFormer;
+
             //存入矩陣
             accelerometerValues = lowPass(event.values.clone(), accelerometerValues);
             x = String.valueOf(accelerometerValues[0]);
             y = String.valueOf(accelerometerValues[1]);
             z = String.valueOf(accelerometerValues[2]);
             gShowInfo("x:" + x + "\ny:" + y  + "\nz:" + z);
+
 //            float temp = accelerometerValues[1];
 //            accelerometerValues[1] = accelerometerValues[2];
 //            accelerometerValues[2] = temp;
@@ -80,6 +86,7 @@ public class SensorActivity extends AppCompatActivity implements SensorEventList
             y = String.valueOf(magneticFieldValues[1]);
             z = String.valueOf(magneticFieldValues[2]);
             mShowInfo("x:" + x + "\ny:" + y  + "\nz:" + z);
+
 //            float temp = magneticFieldValues[1];
 //            magneticFieldValues[1] = magneticFieldValues[2];
 //            magneticFieldValues[2] = temp;

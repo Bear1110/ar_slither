@@ -55,7 +55,7 @@ public class DrawCircle extends View {
             canvas.drawCircle(snake.X, snake.Y, snake.getRadius(), mPaint);
             canvas.drawCircle(snake.X-snake.getRadius()/2, snake.Y, snake.getRadius(), mPaint);
             canvas.drawCircle(snake.X+snake.getRadius()/2, snake.Y, snake.getRadius(), mPaint);
-            canvas.drawText(snake.getDistance()+"", snake.X-snake.getRadius()/2, snake.Y-snake.getRadius(), mPaint);
+            canvas.drawText(snake.getDistance()+" "+snake.getDensity(), snake.X-snake.getRadius()/2, snake.Y-snake.getRadius(), mPaint);
         }
 
         invalidate();
@@ -87,5 +87,9 @@ public class DrawCircle extends View {
             }
         }
     };
+
+    public void stop() {
+        threadSlow = null;
+    }
 
 }

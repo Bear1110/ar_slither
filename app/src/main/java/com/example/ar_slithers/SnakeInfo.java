@@ -5,7 +5,7 @@ public class SnakeInfo {
     float X = 0, Y = 0, sensorX = 0, sensorY = 0, degree;
     private double distance;
     private float radius = 50;
-    private float density;
+    private float density; // according to different phone
 
     SnakeInfo(int colorNo, float density) {
         this.colorNo = colorNo;
@@ -23,7 +23,9 @@ public class SnakeInfo {
     }
 
     public float getRadius() {
-        return radius * density;
+        // 假設距離 5 時 r = 50，而距離 (500 + 5) 時 r = 0
+        float ratio = (float) ((500 - (distance - 5)) / 500);
+        return radius * density * ratio;
     }
 
     public float getDensity() {
