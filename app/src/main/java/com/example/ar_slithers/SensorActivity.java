@@ -101,8 +101,8 @@ public class SensorActivity extends AppCompatActivity implements SensorEventList
         float[] outR = new float[9];
 
         SensorManager.getRotationMatrix(inR, null, accelerometerValues, magneticFieldValues);
-        SensorManager.remapCoordinateSystem(inR, SensorManager.AXIS_X, SensorManager.AXIS_Z, outR);
-        SensorManager.getOrientation(outR, values);
+        //SensorManager.remapCoordinateSystem(inR, SensorManager.AXIS_X, SensorManager.AXIS_Z, outR);
+        SensorManager.getOrientation(inR, values);
 
         float azimuth = (float)(((values[0]*180)/Math.PI));
         float pitch = (float)(((values[1]*180)/Math.PI));

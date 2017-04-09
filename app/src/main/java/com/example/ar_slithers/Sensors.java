@@ -92,7 +92,7 @@ public class Sensors implements SensorEventListener {
 
     // get other players' degree comparison with user, and calculate the distance
     private void getOtherDegree() {
-        double xDistance = 3, yDistance = 4;
+        double xDistance = 30, yDistance = 40;
         for (int i=0; i<DrawCircle.otherSnakes.size(); i++) {
 
             if (!PaintBoard.other.isEmpty()) {
