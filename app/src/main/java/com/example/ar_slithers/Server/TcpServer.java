@@ -166,17 +166,15 @@ public class TcpServer {
                     Random ran = new Random();
                     thisPlayer.remoteSelfCenter[0] = Double.parseDouble(thisPlayer.Lat);
                     thisPlayer.remoteSelfCenter[1] = Double.parseDouble(thisPlayer.Lng);
-
-                    if (thisPlayer.map[0] * thisPlayer.map[1] > 0 && thisPlayer.map[0] > 0){ // 第一象限
-                        thisPlayer.remoteFakeCenter = new double[] {ran.nextInt(50), ran.nextInt(50)};
-                    }else if(thisPlayer.map[0] * thisPlayer.map[1] > 0 && thisPlayer.map[0] < 0){ // 第三象限
-                        thisPlayer.remoteFakeCenter = new double[] {-(ran.nextInt(50)), -(ran.nextInt(50))};
-                    }else if(thisPlayer.map[0] * thisPlayer.map[1] < 0 && thisPlayer.map[0] > 0){ // 第二象限
-                        thisPlayer.remoteFakeCenter = new double[] {-(ran.nextInt(50)), ran.nextInt(50)};
-                    }else if(thisPlayer.map[0] * thisPlayer.map[1] < 0 && thisPlayer.map[0] < 0){ // 第四象限
-                            thisPlayer.remoteFakeCenter = new double[] {ran.nextInt(50), -(ran.nextInt(50))};
+                    int x=1,y=1; //預設第一象限
+                    if( thisPlayer.map[1] < 0 && thisPlayer.map[0] < 0){ // 第三象限
+                        x=y=-1;
+                    }else if( thisPlayer.map[1] > 0 && thisPlayer.map[0] < 0){ // 第二象限
+                        x=-1;
+                    }else if( thisPlayer.map[1] < 0 && thisPlayer.map[0] > 0){ // 第四象限
+                        y=-1;
                     }
-
+                    thisPlayer.remoteFakeCenter = new double[] {x*ran.nextInt(50), y*ran.nextInt(50)};
                 }
                 //算此人位置
                 thisPlayer.map[0] = (Double.parseDouble(thisPlayer.Lat) - thisPlayer.remoteSelfCenter[0]) * 240000 + thisPlayer.remoteFakeCenter[0];
