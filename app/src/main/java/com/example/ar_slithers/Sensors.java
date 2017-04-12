@@ -49,7 +49,7 @@ public class Sensors implements SensorEventListener {
             accelerometerValues = lowPass(event.values.clone(), accelerometerValues);
 
             for (SnakeInfo snake: DrawCircle.otherSnakes) {
-                snake.Y = -accelerometerValues[2]*130 + height*snake.getDensity()/2;
+                snake.Y = -accelerometerValues[2]*130 + height;
             }
         }
 
@@ -101,7 +101,8 @@ public class Sensors implements SensorEventListener {
             }
 
             float otherDegree = (float) Math.toDegrees( Math.atan(yDistance/xDistance) );
-            if (xDistance < 0) otherDegree += 180;
+            if (xDistance < 0) { otherDegree = - (90 + otherDegree); }
+            else { otherDegree = 90 - otherDegree; }
             DrawCircle.otherSnakes.get(i).degree = otherDegree;
             DrawCircle.otherSnakes.get(i).setDistance(xDistance, yDistance);
         }
