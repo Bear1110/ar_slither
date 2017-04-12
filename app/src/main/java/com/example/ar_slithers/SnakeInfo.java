@@ -23,8 +23,8 @@ public class SnakeInfo {
     }
 
     public float getRadius() {
-        // 假設距離 5 時 r = 80，而距離 (500 + 5) 時 r = 0
-        float ratio = (float) ((500 - (distance - 5)) / 500);
+        // 假設距離 5 時 r = 80，而距離 (250 + 5) 時 r = 0
+        float ratio = (float) ((200 - (distance - 5)) / 200);
         if (ratio <= 0) { ratio = 0; }
         return radius * density * ratio;
     }
