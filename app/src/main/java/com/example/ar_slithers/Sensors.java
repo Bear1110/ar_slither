@@ -5,6 +5,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.util.Log;
 import android.widget.TextView;
 
 @SuppressLint("NewApi")
@@ -56,7 +57,6 @@ public class Sensors implements SensorEventListener {
         if(event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD){
             magneticFieldValues = lowPass(event.values.clone(), magneticFieldValues);
         }
-
         calculateOrientation();
 
     }
@@ -88,6 +88,10 @@ public class Sensors implements SensorEventListener {
         if (!DrawCircle.otherSnakes.isEmpty()) {
             info.setText(DrawCircle.otherSnakes.get(0).degree + " " + azimuth);
         }
+        //借我算 面相角度
+        float test= (float) (values[0]-1.5);
+        PaintBoard.radians =  test;
+
     }
 
     // get other players' degree comparison with user, and calculate the distance

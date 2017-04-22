@@ -96,7 +96,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 })
                 .show();
-
     }
 
     // id 對應區

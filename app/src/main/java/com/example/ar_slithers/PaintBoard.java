@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 import java.text.DecimalFormat;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
  */
 
 public class PaintBoard extends View {
+    public static float radians = 0;
     public static double[] target =new double[2];
     public static ArrayList<double[]> other = new ArrayList<double[]>();
 
@@ -27,14 +29,17 @@ public class PaintBoard extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+
         int[] center = {getWidth()/2,getHeight()/2};
         DecimalFormat df = new DecimalFormat("#.####");
 
         //畫自己的點
         Paint paint = new Paint();
-        paint.setColor(Color.BLUE);
-        paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(5);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setColor(Color.YELLOW);//畫面向的方向
+        canvas.drawCircle((float) (20*Math.cos(radians)+center[0]), (float) (20*Math.sin(radians)+center[1]), 5, paint);
+        paint.setColor(Color.BLUE);
         canvas.drawCircle(center[0], center[1], 5, paint);
         paint.setTextSize(40);
         canvas.drawText("("+df.format(target[0])+","+df.format(target[1])+")",center[0],center[1]+40,paint);

@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.example.e6_slithers.R;
@@ -107,7 +108,6 @@ public class SensorActivity extends AppCompatActivity implements SensorEventList
         float azimuth = (float)(((values[0]*180)/Math.PI));
         float pitch = (float)(((values[1]*180)/Math.PI));
         float roll = (float)(((values[2]*180)/Math.PI));
-
         orienShowInfo("azimuth方位角:" + azimuth + "\npitch傾斜角:" + pitch  + "\nroll旋轉角:" + roll);
 
     }
