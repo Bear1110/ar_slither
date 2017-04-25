@@ -1,12 +1,13 @@
-package com.example.ar_slithers;
+package com.example.ar_slithers.Draw;
 
 import android.annotation.SuppressLint;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.util.Log;
 import android.widget.TextView;
+
+import com.example.ar_slithers.PaintBoard;
 
 @SuppressLint("NewApi")
 public class Sensors implements SensorEventListener {
@@ -50,7 +51,10 @@ public class Sensors implements SensorEventListener {
             accelerometerValues = lowPass(event.values.clone(), accelerometerValues);
 
             for (SnakeInfo snake: DrawCircle.otherSnakes) {
-                snake.Y = -accelerometerValues[2]*130 + height;
+                for (BodyInfo aBody: snake.drawBody) {
+                    aBody.Y = -accelerometerValues[2]*130 + height;
+                }
+//                snake.Y = -accelerometerValues[2]*130 + height;
             }
         }
 
@@ -80,13 +84,18 @@ public class Sensors implements SensorEventListener {
         adjustDegree = adjustDegree + 0.25f * (pitch - adjustDegree);
 
         for (SnakeInfo snake: DrawCircle.otherSnakes) {
-            float angle = snake.degree - degree;
-            double radian = Math.toRadians(angle);
-            snake.sensorX = (float) Math.sin(radian/2) * 1500 * 2 + (-adjustDegree)*2.5f + width/2;
+            for (BodyInfo aBody: snake.drawBody) {
+                float angle = aBody.degree - degree;
+                double radian = Math.toRadians(angle);
+                aBody.sensorX = (float) Math.sin(radian/2) * 1500 * 2 + (-adjustDegree)*2.5f + width/2;
+            }
+//            float angle = snake.degree - degree;
+//            double radian = Math.toRadians(angle);
+//            snake.sensorX = (float) Math.sin(radian/2) * 1500 * 2 + (-adjustDegree)*2.5f + width/2;
         }
 
         if (!DrawCircle.otherSnakes.isEmpty()) {
-            info.setText(DrawCircle.otherSnakes.get(0).degree + " " + azimuth);
+            info.setText(DrawCircle.otherSnakes.get(0).drawBody.get(0).degree + " " + azimuth);
         }
         //借我算 面相角度
         float test= (float) (values[0]-1.5);
@@ -97,18 +106,29 @@ public class Sensors implements SensorEventListener {
     // get other players' degree comparison with user, and calculate the distance
     private void getOtherDegree() {
         double xDistance = 30, yDistance = 40;
-        for (int i=0; i<DrawCircle.otherSnakes.size(); i++) {
+        for (SnakeInfo snake: DrawCircle.otherSnakes) {
+            for (int i=0; i<snake.drawBody.size(); i++) {
 
-            if (!PaintBoard.other.isEmpty()) {
-                xDistance = PaintBoard.other.get(i)[0] - PaintBoard.target[0];
-                yDistance = PaintBoard.other.get(i)[1] - PaintBoard.target[1];
+                xDistance = snake.getBodyPos()[i][0] - PaintBoard.target[0];
+                yDistance = snake.getBodyPos()[i][1] - PaintBoard.target[1];
+
+                float otherDegree = (float) Math.toDegrees( Math.atan(yDistance/xDistance) );
+                if (xDistance < 0) { otherDegree = - (90 + otherDegree); }
+                else { otherDegree = 90 - otherDegree; }
+                snake.drawBody.get(i).degree = otherDegree;
+                snake.drawBody.get(i).setDistance(xDistance, yDistance);
             }
 
-            float otherDegree = (float) Math.toDegrees( Math.atan(yDistance/xDistance) );
-            if (xDistance < 0) { otherDegree = - (90 + otherDegree); }
-            else { otherDegree = 90 - otherDegree; }
-            DrawCircle.otherSnakes.get(i).degree = otherDegree;
-            DrawCircle.otherSnakes.get(i).setDistance(xDistance, yDistance);
+//            if (!PaintBoard.other.isEmpty()) {
+//                xDistance = PaintBoard.other.get(i)[0] - PaintBoard.target[0];
+//                yDistance = PaintBoard.other.get(i)[1] - PaintBoard.target[1];
+//            }
+//
+//            float otherDegree = (float) Math.toDegrees( Math.atan(yDistance/xDistance) );
+//            if (xDistance < 0) { otherDegree = - (90 + otherDegree); }
+//            else { otherDegree = 90 - otherDegree; }
+//            DrawCircle.otherSnakes.get(i).degree = otherDegree;
+//            DrawCircle.otherSnakes.get(i).setDistance(xDistance, yDistance);
         }
     }
 

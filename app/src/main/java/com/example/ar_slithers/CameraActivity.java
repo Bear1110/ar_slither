@@ -5,6 +5,7 @@
  ********************************/
 package com.example.ar_slithers;
 
+import com.example.ar_slithers.Draw.DrawCircle;
 import com.example.e6_slithers.R;
 import android.Manifest;
 import android.content.Context;

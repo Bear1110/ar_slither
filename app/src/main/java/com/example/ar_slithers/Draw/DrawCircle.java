@@ -1,4 +1,4 @@
-package com.example.ar_slithers;
+package com.example.ar_slithers.Draw;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -7,6 +7,8 @@ import android.graphics.Paint;
 import android.hardware.SensorManager;
 import android.view.View;
 import android.widget.TextView;
+
+import com.example.ar_slithers.PaintBoard;
 
 import java.util.ArrayList;
 
@@ -19,7 +21,6 @@ public class DrawCircle extends View {
     private static final int DELAY = 400/RATE; // delay longer => move slower
     private static float density;
 
-    private int colorNo = 0;
     private Sensors sensors;
     private static Thread threadSlow;
 
@@ -30,10 +31,8 @@ public class DrawCircle extends View {
         this.density = density;
         mPaint.setTextSize(40);
         sensors = new Sensors(info, sensor);
-        if (otherSnakes.isEmpty()) {
-            otherSnakes.add(new SnakeInfo(colorNo, density));
-            colorNo++;
-        }
+//        double[][] b = {{120.0, 25.0}};
+//        DrawCircle.otherSnakes.add(new SnakeInfo(b, 0));
         if (threadSlow == null) {
             threadSlow = new Thread(SlowDown);
             threadSlow.start();
@@ -46,16 +45,21 @@ public class DrawCircle extends View {
         mPaint.setColor(Color.YELLOW);
 
         if (!otherSnakes.isEmpty()) {
-            canvas.drawText(otherSnakes.get(0).X+"", 100, getHeight()-80, mPaint);
-            canvas.drawText(otherSnakes.get(0).Y+" "+PaintBoard.other.size(), 100, getHeight()-30, mPaint);
+            canvas.drawText(otherSnakes.get(0).drawBody.get(0).X+"", 100, getHeight()-80, mPaint);
+            canvas.drawText(otherSnakes.get(0).drawBody.get(0).Y+" "+ PaintBoard.other.size(), 100, getHeight()-30, mPaint);
         }
 
         for (SnakeInfo snake: otherSnakes) {
             mPaint.setColor(color[snake.colorNo]);
-            canvas.drawCircle(snake.X, snake.Y, snake.getRadius(), mPaint);
-            canvas.drawCircle(snake.X-snake.getRadius()/2, snake.Y, snake.getRadius(), mPaint);
-            canvas.drawCircle(snake.X+snake.getRadius()/2, snake.Y, snake.getRadius(), mPaint);
-            canvas.drawText(snake.getDistance()+" "+snake.getDensity(), snake.X-snake.getRadius()/2, snake.Y-snake.getRadius(), mPaint);
+            for (BodyInfo aBody: snake.drawBody) {
+                canvas.drawCircle(aBody.X, aBody.Y, aBody.getRadius() * density, mPaint);
+                canvas.drawText((int)aBody.getRadius()+"", aBody.X-aBody.getRadius()*2, aBody.Y-aBody.getRadius()*2, mPaint);
+            }
+//            mPaint.setColor(color[snake.colorNo]);
+//            canvas.drawCircle(snake.X, snake.Y, snake.getRadius(), mPaint);
+//            canvas.drawCircle(snake.X-snake.getRadius()/2, snake.Y, snake.getRadius(), mPaint);
+//            canvas.drawCircle(snake.X+snake.getRadius()/2, snake.Y, snake.getRadius(), mPaint);
+//            canvas.drawText(snake.getDistance()+" "+snake.getDensity(), snake.X-snake.getRadius()/2, snake.Y-snake.getRadius(), mPaint);
         }
 
         invalidate();
@@ -66,18 +70,14 @@ public class DrawCircle extends View {
         public void run() {
             while (true) {
                 sensors.setScreenSize(getWidth(), getHeight());
-                // If add new player, otherSnakes must refresh.
-                if (PaintBoard.other.size() > otherSnakes.size()) {
-                    otherSnakes.add(new SnakeInfo(colorNo, density));
-                    colorNo++;
-                    if (colorNo > 3) colorNo = 0;
-                }
 
                 // Move smoother.
                 try {
                     for (int i=0; i<RATE; i++) {
                         for (SnakeInfo snake: otherSnakes) {
-                            snake.X += (snake.sensorX-snake.X)*(i+1)/RATE;
+                            for (BodyInfo aBody: snake.drawBody) {
+                                aBody.X += (aBody.sensorX-aBody.X)*(i+1)/RATE;
+                            }
                         }
                         Thread.sleep(DELAY);
                     }

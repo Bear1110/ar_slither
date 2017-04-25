@@ -21,6 +21,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.ar_slithers.Draw.DrawCircle;
+import com.example.ar_slithers.Draw.SnakeInfo;
 import com.example.e6_slithers.R;
 import com.google.gson.Gson;
 
@@ -33,8 +35,6 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.text.DecimalFormat;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 //mobile center
 import com.microsoft.azure.mobile.MobileCenter;
 import com.microsoft.azure.mobile.analytics.Analytics;
@@ -59,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
     private player[] player = new player[4];
     private int id  = 999;
     private String serverIp = "192.168.0.100"; // 預設是  輸入 伺服器名稱
+
+    private boolean cameraFlag = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // 切換畫面到CameraActivity
+                cameraFlag = true;
                 Intent intent = new Intent();
                 intent.setClass(MainActivity.this, CameraActivity.class);
                 startActivity(intent);
@@ -203,6 +206,7 @@ public class MainActivity extends AppCompatActivity {
 
         PaintBoard.other.clear();
         PaintMap.other_point.clear();
+        if (cameraFlag) { DrawCircle.otherSnakes.clear(); }
         for (int i = 0; i < 4; i++) {
             if (player[i] != null) {
                 latView[i].setText(player[i].map[0]+"");
@@ -216,6 +220,9 @@ public class MainActivity extends AppCompatActivity {
                         double[] temp = {player[i].map[0], player[i].map[1]};
                         PaintBoard.other.add(temp); //  其他人座標
                         PaintMap.other_point.add(player[i].map);
+                        if (cameraFlag) {
+                            DrawCircle.otherSnakes.add(new SnakeInfo(player[i].body, i));
+                        }
                     }
                 }
             } else

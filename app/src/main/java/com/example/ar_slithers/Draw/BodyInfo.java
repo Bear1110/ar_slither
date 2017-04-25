@@ -1,15 +1,12 @@
-package com.example.ar_slithers;
+package com.example.ar_slithers.Draw;
 
-public class SnakeInfo {
-    int colorNo;
-    float X = 0, Y = 0, sensorX = 0, sensorY = 0, degree;
+public class BodyInfo {
+    public float X = 0, Y = 0, sensorX = 0, sensorY = 0, degree;
     private double distance;
-    private float radius = 80;
-    private float density; // according to different phone
+    private float radius = 100;
 
-    SnakeInfo(int colorNo, float density) {
-        this.colorNo = colorNo;
-        this.density = density;
+    public BodyInfo() {
+
     }
 
     public void setDistance(double xDistance, double yDistance) {
@@ -26,10 +23,6 @@ public class SnakeInfo {
         // 假設距離 5 時 r = 80，而距離 (250 + 5) 時 r = 0
         float ratio = (float) ((200 - (distance - 5)) / 200);
         if (ratio <= 0) { ratio = 0; }
-        return radius * density * ratio;
-    }
-
-    public float getDensity() {
-        return density;
+        return radius  * ratio;
     }
 }
