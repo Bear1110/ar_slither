@@ -60,8 +60,6 @@ public class MainActivity extends AppCompatActivity {
     private int id  = 999;
     private String serverIp = "192.168.0.100"; // 預設是  輸入 伺服器名稱
 
-    private boolean cameraFlag = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         MobileCenter.start(getApplication(), "75774d09-5381-4c9e-9e51-8bca3b6440bb",Analytics.class, Crashes.class, Distribute.class);
@@ -119,7 +117,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // 切換畫面到CameraActivity
-                cameraFlag = true;
                 Intent intent = new Intent();
                 intent.setClass(MainActivity.this, CameraActivity.class);
                 startActivity(intent);
@@ -206,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
 
         PaintBoard.other.clear();
         PaintMap.other_point.clear();
-        if (cameraFlag) { DrawCircle.otherSnakes.clear(); }
+        DrawCircle.otherSnakes.clear();
         for (int i = 0; i < 4; i++) {
             if (player[i] != null) {
                 latView[i].setText(player[i].map[0]+"");
@@ -220,9 +217,7 @@ public class MainActivity extends AppCompatActivity {
                         double[] temp = {player[i].map[0], player[i].map[1]};
                         PaintBoard.other.add(temp); //  其他人座標
                         PaintMap.other_point.add(player[i].map);
-                        if (cameraFlag) {
-                            DrawCircle.otherSnakes.add(new SnakeInfo(player[i].body, i));
-                        }
+                        DrawCircle.otherSnakes.add(new SnakeInfo(player[i].body, i));
                     }
                 }
             } else

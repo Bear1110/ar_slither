@@ -44,9 +44,15 @@ public class DrawCircle extends View {
         super.onDraw(canvas);
         mPaint.setColor(Color.YELLOW);
 
+        // just for test
         if (!otherSnakes.isEmpty()) {
-            canvas.drawText(otherSnakes.get(0).drawBody.get(0).X+"", 100, getHeight()-80, mPaint);
-            canvas.drawText(otherSnakes.get(0).drawBody.get(0).Y+" "+ PaintBoard.other.size(), 100, getHeight()-30, mPaint);
+            canvas.drawText(otherSnakes.get(0).getBodyPos()[0][0]+" ", 100, getHeight()-330, mPaint);
+            canvas.drawText(otherSnakes.get(0).getBodyPos()[1][0]+" ", 100, getHeight()-280, mPaint);
+            canvas.drawText(otherSnakes.get(0).getBodyPos()[2][0]+" ", 100, getHeight()-230, mPaint);
+            canvas.drawText(otherSnakes.get(0).getBodyPos()[3][0]+" ", 100, getHeight()-180, mPaint);
+            canvas.drawText(otherSnakes.get(0).getBodyPos()[4][0]+" ", 100, getHeight()-130, mPaint);
+            canvas.drawText(otherSnakes.get(0).getBodyPos()[5][0]+" ", 100, getHeight()-80, mPaint);
+            canvas.drawText(otherSnakes.get(0).getBodyPos()[6][0]+" ", 100, getHeight()-30, mPaint);
         }
 
         for (SnakeInfo snake: otherSnakes) {

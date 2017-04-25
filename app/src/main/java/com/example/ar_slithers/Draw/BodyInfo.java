@@ -3,7 +3,7 @@ package com.example.ar_slithers.Draw;
 public class BodyInfo {
     public float X = 0, Y = 0, sensorX = 0, sensorY = 0, degree;
     private double distance;
-    private float radius = 100;
+    private float radius = 80;
 
     public BodyInfo() {
 
