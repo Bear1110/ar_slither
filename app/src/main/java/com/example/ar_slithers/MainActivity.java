@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        lms.requestLocationUpdates(bestProvider, 1000, 1, locationListener);//當時間超過minTime（單位：毫秒），或者位置移動超過minDistance（單位：米），就會調用listener中的方法更新GPS資訊。
+        lms.requestLocationUpdates(bestProvider, 500, 1, locationListener);//當時間超過minTime（單位：毫秒），或者位置移動超過minDistance（單位：米），就會調用listener中的方法更新GPS資訊。
         Location location = lms.getLastKnownLocation(bestProvider);
         getLocation(location);
     }
@@ -247,7 +247,7 @@ public class MainActivity extends AppCompatActivity {
                 });
                 while (true) {
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(500);
                         DataOutputStream output = new DataOutputStream(clientSocket.getOutputStream());
                         JSONObject ClientData = new JSONObject();
                         try {
