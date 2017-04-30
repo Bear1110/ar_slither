@@ -1,5 +1,4 @@
 package com.example.ar_slithers.Server;
-
 import java.io.*;
 import java.net.*;
 import java.util.Stack;
@@ -190,8 +189,13 @@ public class TcpServer {
             thisPlayer.body[0][0] = thisPlayer.map[0];
             thisPlayer.body[0][1] = thisPlayer.map[1];
             for (int i = thisPlayer.body.length-1 ; i > 0 ; i--) {
-                thisPlayer.body[i][0] = thisPlayer.body[i-1][0];
-                thisPlayer.body[i][1] = thisPlayer.body[i-1][1];
+                double x = (thisPlayer.body[i][0]- thisPlayer.body[i-1][0]);
+                double y = (thisPlayer.body[i][1]- thisPlayer.body[i-1][1]);
+                double distance = Math.sqrt(x*x+y*y);
+                if(distance > 10){ //為了不讓他重疊再一起
+                    thisPlayer.body[i][0] = thisPlayer.body[i-1][0];
+                    thisPlayer.body[i][1] = thisPlayer.body[i-1][1];
+                }
             }
         }
 
