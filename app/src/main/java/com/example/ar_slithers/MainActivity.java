@@ -204,7 +204,8 @@ public class MainActivity extends AppCompatActivity {
         PaintBoard.other.clear();
         PaintMap.other_point.clear();
         DrawCircle.otherSnakes.clear();
-        for (int i = 0; i < 4; i++) {
+        int leng = player.length;
+        for (int i = 0; i < leng; i++) {
             if (player[i] != null) {
                 latView[i].setText(player[i].map[0]+"");
                 lngView[i].setText(player[i].map[1]+"");

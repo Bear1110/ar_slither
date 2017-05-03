@@ -2,8 +2,11 @@ package com.example.ar_slithers.Server;
 import java.io.*;
 import java.net.*;
 import java.util.Stack;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.ArrayList;
 import java.util.Random;
 import org.json.*;
 /**
@@ -13,12 +16,14 @@ import com.google.gson.Gson;
 
 public class TcpServer {
     public static final int LISTEN_PORT = 12345;
-    public player[] player = new player[4];
+    public player[] player = new player[10];
     private Stack<Integer> empty = new Stack<Integer>();
     public double[] mapCenter = {0, 0};
 
+    public ArrayList<item> item = new ArrayList<item>();
+
     public void listenRequest() {
-        for (int i = 3; i >= 0; i--) {
+        for (int i = 9; i >= 0; i--) {
             empty.push(i);
         }
         // player[0] = new player(1, "");
@@ -45,6 +50,7 @@ public class TcpServer {
         try {
             serverSocket = new ServerSocket(LISTEN_PORT);
             System.out.println("Server listening requests...");
+            startUpdatingTimer();
             while (true) { // accept()
                 Socket socket = serverSocket.accept();
                 threadExecutor.execute(new RequestThread(socket));
@@ -109,8 +115,7 @@ public class TcpServer {
                 while (!this.clientSocket.isClosed()) {
                     try {
                         message = input.readUTF();
-                        System.out.println(
-                                "P" + (thisPlayer.id) + "說:" + message);
+//                        System.out.println("P" + (thisPlayer.id) + "說:" + message);
                         try {
                             JSONObject messageJSON = new JSONObject(message);
                             if (!messageJSON.get("lat").toString().equals("")) {
@@ -124,7 +129,6 @@ public class TcpServer {
                                 setThisPlayerMap(Lat, Lng);
                             }
                             ServerData.put("Data", gson.toJson(player));
-                            ServerData.put("mapCenter", gson.toJson(mapCenter));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -182,13 +186,27 @@ public class TcpServer {
                 thisPlayer.map[1] = (lng - thisPlayer.remoteCenter[1]) * c
                         + thisPlayer.fakeCenter[1];
             }
+            checkEating();
             setBody();
+        }
+
+        private void checkEating() {
+            for(item i : item){
+                if(i.isDead)continue;
+                double x = thisPlayer.map[0]-i.map[0];
+                double y = thisPlayer.map[1]-i.map[1];
+                double distance = Math.sqrt(x*x+y*y);
+                if(distance < 5){// 表示吃到了
+                    i.isDead = true;
+                    thisPlayer.bodyLength++;
+                }
+            }
         }
 
         private void setBody() {
             thisPlayer.body[0][0] = thisPlayer.map[0];
             thisPlayer.body[0][1] = thisPlayer.map[1];
-            for (int i = thisPlayer.body.length-1 ; i > 0 ; i--) {
+            for (int i = 1 ; i < thisPlayer.bodyLength ; i++) {
                 double x = (thisPlayer.body[i][0]- thisPlayer.body[i-1][0]);
                 double y = (thisPlayer.body[i][1]- thisPlayer.body[i-1][1]);
                 double distance = Math.sqrt(x*x+y*y);
@@ -222,6 +240,26 @@ public class TcpServer {
         }
 
     }
+
+    public void startUpdatingTimer() {
+        Timer gameTimer = new Timer();
+        for(int i = 1 ; i<= 7 ; i++){
+            item.add(new item("food"));
+        }
+
+        TimerTask startUpdating = new TimerTask() {
+            @Override
+            public void run() {
+                for(item i : item){
+                    if(i.isDead){
+                        i.reBorm();
+                        break;
+                    }
+                }
+            }
+        };
+        gameTimer.schedule(startUpdating, 0, 1000);
+    }
     public class player {
         public int id;
         public String ip = "test";
@@ -229,11 +267,27 @@ public class TcpServer {
         public double[] remoteCenter = {0.0, 0.0}; // 自身在遠處的進來座標
         public double[] fakeCenter = {0.0, 0.0}; // 遠處的人假的 地圖中心 (隨機位置)
         public double[][] body = new double[7][2];
+        public int bodyLength = 1;
         public double[] map = {0, 0};
 
         public player(int id, String ip) {
             this.id = id;
             this.ip = ip;
+        }
+    }
+    public class item {
+        public float[] map = {0, 0}; // 物品
+        public String type = "None";
+        public boolean isDead = true;
+
+        public item(String type) {
+            this.type = type;
+        }
+
+        public void reBorm() {
+            isDead = false;
+            this.map[0] =(float) (Math.random()*100+1); //1~100
+            this.map[1] =(float) (Math.random()*100+1);
         }
     }
 }
