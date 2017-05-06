@@ -5,19 +5,21 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.hardware.SensorManager;
+import android.hardware.camera2.CameraManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
+import android.util.DisplayMetrics;
+import android.view.SurfaceView;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +27,10 @@ import com.example.ar_slithers.Draw.DrawCircle;
 import com.example.ar_slithers.Draw.SnakeInfo;
 import com.example.e6_slithers.R;
 import com.google.gson.Gson;
+import com.microsoft.azure.mobile.MobileCenter;
+import com.microsoft.azure.mobile.analytics.Analytics;
+import com.microsoft.azure.mobile.crashes.Crashes;
+import com.microsoft.azure.mobile.distribute.Distribute;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,26 +41,29 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.text.DecimalFormat;
+
 //mobile center
-import com.microsoft.azure.mobile.MobileCenter;
-import com.microsoft.azure.mobile.analytics.Analytics;
-import com.microsoft.azure.mobile.crashes.Crashes;
-import com.microsoft.azure.mobile.distribute.Distribute;
 
 public class MainActivity extends AppCompatActivity {
 
-    private EditText mLat_input, mLng_input;
     private TextView mTitle;
-    private TextView latView[] = new TextView[4];
-    private TextView lngView[] = new TextView[4];
+    private FrameLayout drawLayout;
+    private TextView info;
     // 與連線有關的參數
     private Handler handler = new Handler();
     private Socket clientSocket;
     private Thread thread;
     // GPS相關
-    private LocationManager lms;
+    private LocationManager locationManager;
     private Location location;
     private String bestProvider = LocationManager.GPS_PROVIDER;
+    private final static int LOCATION_REQUEST_CODE = 3333;
+    private String mLat, mLng;
+    // Camera相關
+    private SurfaceView cameraView;
+    private CameraManager cameraManager;
+    private final static int CAMERA_REQUEST_CODE = 2222;
+    private OpenCamera openCam;
 
     private player[] player = new player[4];
     private int id  = 999;
@@ -67,6 +76,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         final EditText inputIp = new EditText(this);
         inputIp.setText(serverIp);
+        // id 對應區
+        viewIdToObject();
+        // 開啟相機
+        startCamera();
         new AlertDialog.Builder(this)
                 .setTitle("Server IP")
                 .setView(inputIp)
@@ -74,13 +87,8 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         serverIp = inputIp.getText().toString();
-                        // id 對應區
-                        viewIdToObject();
-                        // 事件宣告
-                        createEvents();
                         // 取得系統定位服務
-                        LocationManager locationManager
-                                = (LocationManager) (MainActivity.this.getSystemService(Context.LOCATION_SERVICE));
+                        locationManager= (LocationManager) (MainActivity.this.getSystemService(Context.LOCATION_SERVICE));
                         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
                                 || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
                             // 如果GPS或網路定位開啟，呼叫locationServiceInitial()更新位置
@@ -93,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
                         //連線
                         thread = new Thread(Connection); // 賦予執行緒工作
                         thread.start();
+                        drawCamera();
                     }
                 })
                 .show();
@@ -100,62 +109,14 @@ public class MainActivity extends AppCompatActivity {
 
     // id 對應區
     private void viewIdToObject() {
-        mLat_input = (EditText) findViewById(R.id.Lat_input);
-        mLng_input = (EditText) findViewById(R.id.Lng_input);
         mTitle = (TextView) findViewById(R.id.Title);
-        for (int i = 0, temp = 0; i < 4; i++) {
-            temp = getResources().getIdentifier("P" + (i + 1) + "_lat", "id", getPackageName());
-            latView[i] = (TextView) findViewById(temp);
-            temp = getResources().getIdentifier("P" + (i + 1) + "_lng", "id", getPackageName());
-            lngView[i] = (TextView) findViewById(temp);
-        }
-    }
-    // 事件宣告
-    private void createEvents() {
-        Button cameraBtn = (Button) findViewById(R.id.camera);
-        cameraBtn.setOnClickListener(new Button.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 切換畫面到CameraActivity
-                Intent intent = new Intent();
-                intent.setClass(MainActivity.this, CameraActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        Button sensorBtn = (Button) findViewById(R.id.sensor);
-        sensorBtn.setOnClickListener(new Button.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // 切換畫面到gyroscope
-                Intent intent = new Intent();
-                intent.setClass(MainActivity.this, SensorActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        Button GPS_Btn = (Button) findViewById(R.id.GPS);
-        GPS_Btn.setOnClickListener(new Button.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // 切換畫面到GPS
-                Intent intent = new Intent();
-                intent.setClass(MainActivity.this, GpsActivity.class);
-                startActivity(intent);
-            }
-        });
-        // 傳送資料給server
-        Button mSubmitButton = (Button) findViewById(R.id.Submit);
-        mSubmitButton.setOnClickListener(new Button.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                submit_click();
-            }
-        });
+        drawLayout = (FrameLayout) findViewById(R.id.frame);
+        info = (TextView)findViewById(R.id.info);
+        cameraView = (SurfaceView) findViewById(R.id.cameraView);
     }
 
     private void locationServiceInitial() {
-        lms = (LocationManager) getSystemService(LOCATION_SERVICE);
+//        lms = (LocationManager) getSystemService(LOCATION_SERVICE);
 //        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 //            locationProvider = LocationManager.GPS_PROVIDER;
 //        } else if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
@@ -163,21 +124,22 @@ public class MainActivity extends AppCompatActivity {
 //        }
          /*做法二,由Criteria物件判斷提供最準確的資訊*/
         Criteria criteria = new Criteria(); // 資訊提供者選取標準
-        bestProvider = lms.getBestProvider(criteria, true); // 選擇精準度最高的提供者
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
+        bestProvider = locationManager.getBestProvider(criteria, true); // 選擇精準度最高的提供者
+        if (bestProvider == null) {
+            bestProvider = LocationManager.GPS_PROVIDER;
         }
-        lms.requestLocationUpdates(bestProvider, 500, 1, locationListener);//當時間超過minTime（單位：毫秒），或者位置移動超過minDistance（單位：米），就會調用listener中的方法更新GPS資訊。
-        Location location = lms.getLastKnownLocation(bestProvider);
-        getLocation(location);
+        useLocation();
+    }
+
+    private void useLocation() {
+        try {
+            locationManager.requestLocationUpdates(bestProvider, 500, 1, locationListener);//當時間超過minTime（單位：毫秒），或者位置移動超過minDistance（單位：米），就會調用listener中的方法更新GPS資訊。
+            Location location = locationManager.getLastKnownLocation(bestProvider);
+            getLocation(location);
+        } catch (SecurityException e) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
+        }
     }
 
     private void getLocation(Location location) { // 將定位資訊顯示在畫面中
@@ -185,15 +147,51 @@ public class MainActivity extends AppCompatActivity {
         if (location != null) {
             Double longitude = location.getLongitude(); // 取得經度
             Double latitude = location.getLatitude(); // 取得緯度
-            mLat_input.setText(String.valueOf(df.format(longitude)));
-            mLng_input.setText(String.valueOf(df.format(latitude)));
+            mLat = String.valueOf(df.format(longitude));
+            mLng = String.valueOf(df.format(latitude));
         } else {
             Toast.makeText(this, "無法定位座標", Toast.LENGTH_LONG).show();
         }
     }
 
-    public void submit_click() { //目前無用
+    private void startCamera() {
+        // Camera Surface View
+        cameraManager = (CameraManager) this.getSystemService(Context.CAMERA_SERVICE);
+        openCam = new OpenCamera(info, this, cameraManager, cameraView);
     }
+
+    private void drawCamera() {
+        // Draw in Layout
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        DrawCircle drawCircle = new DrawCircle(this, displayMetrics.density, info,
+                (SensorManager)getSystemService(Context.SENSOR_SERVICE));
+        drawLayout.addView(drawCircle);
+    }
+
+    // 詢問使用者是否能取得權限
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case LOCATION_REQUEST_CODE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0) {
+                    useLocation();
+                } else {
+                    finish();
+                }
+            }
+            case CAMERA_REQUEST_CODE: {
+                if (grantResults.length > 0) {
+                    openCam.openCamera();
+                } else {
+                    finish();
+                }
+            }
+        }
+    }
+
     private void updateData(String ServerData) {
         Gson gson = new Gson();
         try {
@@ -206,8 +204,6 @@ public class MainActivity extends AppCompatActivity {
         DrawCircle.otherSnakes.clear();
         for (int i = 0; i < 4; i++) {
             if (player[i] != null) {
-                latView[i].setText(player[i].map[0]+"");
-                lngView[i].setText(player[i].map[1]+"");
                 if(player[i].map[0] != 0) {
                     if (player[i].id == id) {//自己
                         PaintBoard.target[0] = player[i].map[0]; //本人座標
@@ -220,8 +216,7 @@ public class MainActivity extends AppCompatActivity {
                         DrawCircle.otherSnakes.add(new SnakeInfo(player[i].body, i));
                     }
                 }
-            } else
-                latView[i].setText("此位置尚未加入");
+            }
         }
     }
 
@@ -251,8 +246,8 @@ public class MainActivity extends AppCompatActivity {
                         DataOutputStream output = new DataOutputStream(clientSocket.getOutputStream());
                         JSONObject ClientData = new JSONObject();
                         try {
-                            ClientData.put("lat", mLat_input.getText());
-                            ClientData.put("lng", mLng_input.getText());
+                            ClientData.put("lat", mLat);
+                            ClientData.put("lng", mLng);
                         } catch (Exception e) {e.printStackTrace();}
                         // 傳東西給server
                         output.writeUTF(ClientData.toString());
