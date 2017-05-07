@@ -20,6 +20,7 @@ public class Sensors implements SensorEventListener {
     private SensorManager sensorManager;
     private Sensor gsensor, msensor;
     private TextView info;
+    public static float radians = 0;
 
     private float[] accelerometerValues = new float[3];
     private float[] magneticFieldValues = new float[3];
@@ -98,9 +99,7 @@ public class Sensors implements SensorEventListener {
             info.setText(DrawCircle.otherSnakes.get(0).drawBody.get(0).degree + " " + azimuth);
         }
         //借我算 面相角度
-        float test= (float) (values[0]-1.5);
-        PaintBoard.radians =  test;
-
+        radians = (float) (values[0]-1.5);
     }
 
     // get other players' degree comparison with user, and calculate the distance

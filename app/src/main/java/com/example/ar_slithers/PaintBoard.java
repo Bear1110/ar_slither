@@ -8,6 +8,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
+import com.example.ar_slithers.Draw.Sensors;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 /**
@@ -18,18 +20,17 @@ import java.util.ArrayList;
  */
 
 public class PaintBoard extends View {
-    public static float radians = 0;
     public static double[] target =new double[2];
     public static item[] item={};
     public static ArrayList<double[]> other = new ArrayList<double[]>();
-
     public PaintBoard(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
+
     @Override
     protected void onDraw(Canvas canvas) {
+        float radians = Sensors.radians;
         super.onDraw(canvas);
-
 
         int[] center = {getWidth()/2,getHeight()/2};
         DecimalFormat df = new DecimalFormat("#.####");
