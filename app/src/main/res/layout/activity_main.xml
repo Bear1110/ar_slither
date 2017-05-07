@@ -5,220 +5,11 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.ar_slithers.MainActivity">
+    tools:context="com.example.ar_slithers.MainActivity"><![CDATA[
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/str1"
-        android:textColor="@android:color/black"
-        android:textSize="24sp"
-        android:id="@+id/Title" />
 
-    <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
 
-            <TextView
-                android:text="@string/str2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/textView"
-                android:layout_weight="1"
-                android:textColor="@android:color/black"
-                android:textSize="24sp"
-                android:layout_gravity="center_vertical"
-                android:textAlignment="center" />
-
-            <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="numberDecimal"
-                android:ems="10"
-                android:id="@+id/Lat_input"
-                android:layout_weight="2" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-
-            <TextView
-                android:text="@string/str3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@android:color/black"
-                android:textSize="24sp"
-                android:layout_weight="1"
-                android:textAlignment="center" />
-
-            <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="numberDecimal"
-                android:ems="10"
-                android:id="@+id/Lng_input"
-                android:layout_weight="2" />
-
-        </TableRow>
-
-    </TableLayout>
-
-    <Button
-        android:text="@string/str4"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/Submit"
-        android:textSize="24sp" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-
-            <TextView
-                android:text="@string/p1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="@android:color/background_dark"
-                android:textSize="18sp"
-                android:height="30dp"
-                android:gravity="center_vertical"
-                android:textAlignment="center" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/P1_lat"
-                android:textSize="18sp"
-                android:textColor="@android:color/holo_red_dark"
-                android:layout_weight="1" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/P1_lng"
-                android:layout_weight="1"
-                android:textSize="18sp" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-
-            <TextView
-                android:text="@string/p2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:height="30dp"
-                android:layout_weight="1"
-                android:textColor="@android:color/background_dark"
-                android:textAlignment="center"
-                android:textSize="18sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/P2_lat"
-                android:textColor="@android:color/holo_red_dark"
-                android:textSize="18sp"
-                android:layout_weight="1" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/P2_lng"
-                android:layout_weight="1"
-                android:textColor="@android:color/holo_red_dark"
-                android:textSize="18sp" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-
-            <TextView
-                android:text="@string/p3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:height="30dp"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:textAlignment="center"
-                android:textColor="@android:color/background_dark"
-                android:textSize="18sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/P3_lat"
-                android:textColor="@android:color/holo_red_dark"
-                android:textSize="18sp"
-                android:layout_weight="1" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/P3_lng"
-                android:layout_weight="1"
-                android:textColor="@android:color/holo_red_dark"
-                android:textSize="18sp" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-
-            <TextView
-                android:text="@string/p4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:height="30dp"
-                android:layout_weight="1"
-                android:textAlignment="center"
-                android:textColor="@android:color/background_dark"
-                android:textSize="18sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/P4_lat"
-                android:textSize="18sp"
-                android:textColor="@android:color/holo_red_dark"
-                android:layout_weight="1" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/P4_lng"
-                android:layout_weight="1"
-                android:textSize="18sp"
-                android:textColor="@android:color/holo_red_dark" />
-
-        </TableRow>
-    </TableLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" /><![CDATA[
 
 
         android:orientation="horizontal"
@@ -241,52 +32,50 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
     ]]>
 
-    <TableLayout
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:id="@+id/frame"
+        android:layout_height="350dp">
+
+        <SurfaceView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-        android:weightSum="1">
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" >
+            android:id="@+id/cameraView" />
 
-                <Button
-                android:text="@string/str5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/camera"
-                android:layout_weight="1" />
+    </FrameLayout>
 
-            <Button
-                android:text="@string/str6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/sensor"
-                android:layout_weight="1" />
+    <com.example.ar_slithers.PaintBoard
+        android:id="@+id/paint_board"
+        android:layout_width="match_parent"
+        android:background="@android:color/darker_gray"
+        android:layout_height="120dp" />
 
-            <Button
-                android:text="@string/str7"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:id="@+id/GPS" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/str1"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        android:id="@+id/Title" />
 
-                <com.example.ar_slithers.PaintMap
-                    android:id="@+id/paint_map"
-                    android:layout_width="60dp"
-                    android:layout_height="45dp"
-                    android:background="@android:color/darker_gray" />
-
-            </TableRow>
-
-        <com.example.ar_slithers.PaintBoard
-            android:id="@+id/paint_board"
-            android:layout_width="match_parent"
-            android:layout_height="132dp"
-            android:background="@android:color/darker_gray" />
-
-    </TableLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/info"
+        android:textColor="@android:color/black"
+        android:textSize="18sp" />
 
 
 </LinearLayout>
