@@ -17,6 +17,7 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.SurfaceView;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -41,6 +42,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 //mobile center
 
@@ -65,9 +67,9 @@ public class MainActivity extends AppCompatActivity {
     private final static int CAMERA_REQUEST_CODE = 2222;
     private OpenCamera openCam;
 
-    private player[] player = new player[4];
+    private player[] player = new player[10];
     private int id  = 999;
-    private String serverIp = "192.168.0.100"; // 預設是  輸入 伺服器名稱
+    private String serverIp = "140.115.202.101"; // 預設是  輸入 伺服器名稱
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -194,11 +196,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateData(String ServerData) {
         Gson gson = new Gson();
+        item[] item = {};
         try {
             JSONObject transfer = new JSONObject(ServerData);
             player = gson.fromJson(transfer.getString("Data"), player[].class);
+            item = gson.fromJson(transfer.getString("Item"), item[].class);
         } catch (JSONException e) {e.printStackTrace();}
 
+        PaintBoard.item = item;
         PaintBoard.other.clear();
         PaintMap.other_point.clear();
         DrawCircle.otherSnakes.clear();
@@ -210,6 +215,8 @@ public class MainActivity extends AppCompatActivity {
                         PaintBoard.target[0] = player[i].map[0]; //本人座標
                         PaintBoard.target[1] = player[i].map[1];
                         PaintMap.other_point.add(player[i].map);
+                        mTitle.setText("Input Location(You are P" + player[i].id + ")"+" 長度"+player[i].bodyLength);
+                        Log.i("123",player[i].bodyLength+"");
                     } else {
                         double[] temp = {player[i].map[0], player[i].map[1]};
                         PaintBoard.other.add(temp); //  其他人座標
@@ -238,7 +245,6 @@ public class MainActivity extends AppCompatActivity {
                 handler.post(new Runnable() {
                     public void run() {
                         updateData(ServerData);
-                        mTitle.setText("Input Location(You are P" + id + ")");
                     }
                 });
                 while (true) {

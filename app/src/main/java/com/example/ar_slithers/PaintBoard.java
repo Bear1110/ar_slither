@@ -20,6 +20,7 @@ import java.util.ArrayList;
 public class PaintBoard extends View {
     public static float radians = 0;
     public static double[] target =new double[2];
+    public static item[] item={};
     public static ArrayList<double[]> other = new ArrayList<double[]>();
 
     public PaintBoard(Context context, AttributeSet attrs) {
@@ -55,6 +56,15 @@ public class PaintBoard extends View {
             canvas.drawCircle(center[0]+x, center[1]+y, 5, paint);
             canvas.drawText("("+df.format(other.get(i)[0])+","+df.format(other.get(i)[1])+")",center[0]+x,center[1]+y+30,paint);
 //            canvas.drawCircle(center[0]+x, center[1]+y, 5, paint);
+        }
+        //畫物體
+        for(int i = 0 ; i < item.length ; i ++){
+            float x = (float) (item[i].map[0]-target[0]);
+            float y = (float) -(item[i].map[1]-target[1]);
+            paint.setColor(Color.GREEN);
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(5);
+            canvas.drawCircle(center[0]+x, center[1]+y, 5, paint);
         }
         invalidate();
     }

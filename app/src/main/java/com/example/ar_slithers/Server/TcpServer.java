@@ -1,4 +1,6 @@
 package com.example.ar_slithers.Server;
+import java.net.*;
+import java.util.Stack;
 import java.io.*;
 import java.net.*;
 import java.util.Stack;
@@ -110,7 +112,7 @@ public class TcpServer {
                     e1.printStackTrace();
                 } catch (JSONException e) {
                     e.printStackTrace();
-                } ///////////////////////////// 這是第一次傳送數據 以上
+                } ///////////////////////////// 以上是第一次傳送數據
 
                 while (!this.clientSocket.isClosed()) {
                     try {
@@ -129,6 +131,7 @@ public class TcpServer {
                                 setThisPlayerMap(Lat, Lng);
                             }
                             ServerData.put("Data", gson.toJson(player));
+                            ServerData.put("Item", gson.toJson(item));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -197,8 +200,13 @@ public class TcpServer {
                 double y = thisPlayer.map[1]-i.map[1];
                 double distance = Math.sqrt(x*x+y*y);
                 if(distance < 5){// 表示吃到了
+                    if(this.thisPlayer.bodyLength>=7){
+                        System.out.println("吃到了身體長度是  長度已經爆滿了");
+                        return;
+                    }
                     i.isDead = true;
                     thisPlayer.bodyLength++;
+                    System.out.println("吃到了身體長度是  "+this.thisPlayer);
                 }
             }
         }
@@ -286,8 +294,8 @@ public class TcpServer {
 
         public void reBorm() {
             isDead = false;
-            this.map[0] =(float) (Math.random()*100+1); //1~100
-            this.map[1] =(float) (Math.random()*100+1);
+            this.map[0] =(float) (Math.random()*40+1); //1~100
+            this.map[1] =(float) (Math.random()*40+1);
         }
     }
 }
