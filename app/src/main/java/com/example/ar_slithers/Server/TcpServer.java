@@ -294,8 +294,8 @@ public class TcpServer {
 
         public void reBorm() {
             isDead = false;
-            this.map[0] =(float) (Math.random()*40+1); //1~100
-            this.map[1] =(float) (Math.random()*40+1);
+            this.map[0] =(float) (Math.random()*50+1)-25; //1~100
+            this.map[1] =(float) (Math.random()*50+1)-25;
         }
     }
 }
