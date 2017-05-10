@@ -56,6 +56,12 @@ public class DrawCircle extends View {
         }
 
         for (SnakeInfo snake: otherSnakes) {
+            mPaint.setColor(Color.BLACK);
+            //canvas.drawCircle(snake.drawBody.get(0).X + snake.drawBody.get(0).getRadius() * density, snake.drawBody.get(0).Y + snake.drawBody.get(0).getRadius() * density, snake.drawBody.get(0).getRadius() * (float) 0.2 * density, mPaint);
+            canvas.drawCircle((float)(snake.drawBody.get(0).X+snake.drawBody.get(0).getRadius()*0.2*density), (float)(snake.drawBody.get(0).Y+snake.drawBody.get(0).getRadius()*0.2*density), (float)(snake.drawBody.get(0).getRadius()*0.2*density), mPaint);
+            canvas.drawCircle((float)(snake.drawBody.get(0).X+snake.drawBody.get(0).getRadius()*0.6*density), (float)(snake.drawBody.get(0).Y+snake.drawBody.get(0).getRadius()*0.8*density), (float)(snake.drawBody.get(0).getRadius()*0.1*density), mPaint);
+            canvas.drawCircle((float)(snake.drawBody.get(0).X+snake.drawBody.get(0).getRadius()*0.6*density), (float)(snake.drawBody.get(0).Y+snake.drawBody.get(0).getRadius()*0.4*density), (float)(snake.drawBody.get(0).getRadius()*0.25*density), mPaint);
+            canvas.drawCircle((float)(snake.drawBody.get(0).X+snake.drawBody.get(0).getRadius()*0.25*density), (float)(snake.drawBody.get(0).Y+snake.drawBody.get(0).getRadius()*0.6*density), (float)(snake.drawBody.get(0).getRadius()*0.15*density), mPaint);
             mPaint.setColor(color[snake.colorNo]);
             for (BodyInfo aBody: snake.drawBody) {
                 canvas.drawCircle(aBody.X, aBody.Y, aBody.getRadius() * density, mPaint);
