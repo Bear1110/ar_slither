@@ -218,7 +218,7 @@ public class TcpServer {
                 double x = (thisPlayer.body[i][0]- thisPlayer.body[i-1][0]);
                 double y = (thisPlayer.body[i][1]- thisPlayer.body[i-1][1]);
                 double distance = Math.sqrt(x*x+y*y);
-                if(distance > 10){ //為了不讓他重疊再一起
+                if(distance > 2){ //為了不讓他重疊再一起
                     thisPlayer.body[i][0] = thisPlayer.body[i-1][0];
                     thisPlayer.body[i][1] = thisPlayer.body[i-1][1];
                 }
@@ -294,9 +294,8 @@ public class TcpServer {
 
         public void reBorm() {
             isDead = false;
-            this.map[0] =(float) (Math.random()*50+1)-25; //1~100
-            this.map[1] =(float) (Math.random()*50+1)-25;
+            this.map[0] =(float) (Math.random()*100+1)-50; //-50~50
+            this.map[1] =(float) (Math.random()*100+1)-50;
         }
     }
 }
-
